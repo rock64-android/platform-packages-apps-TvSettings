@@ -42,6 +42,11 @@
             android:title="@string/device_sound"
             android:fragment="com.android.tv.settings.device.sound.SoundFragment" />
         <Preference
+            android:icon="@drawable/resolutions"
+            android:key="displaies"
+            android:title="@string/display_category_title"
+            android:fragment="com.android.tv.settings.device.sound.SoundFragment" />
+        <Preference
             android:icon="@drawable/ic_adb"
             android:key="apps"
             android:title="@string/device_apps"
@@ -162,4 +167,15 @@
                 android:targetPackage="com.google.android.gsf.pano" />
         </Preference>
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="display"
+        android:title="@string/display_category_title">
+         <Preference
+            android:icon="@drawable/resolutions"
+            android:key="resolutions"
+            android:title="@string/resolutions"/>
+    </PreferenceCategory>
+
+
 </PreferenceScreen>

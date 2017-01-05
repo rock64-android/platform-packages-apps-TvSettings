@@ -1440,4 +1440,7 @@
     <!-- Shutdown Confirmation Dialog. Detailed message in the confirmation dialog when the user asks to reboot into safe mode [CHAR LIMIT=NONE] -->
     <string name="reboot_safemode_desc">This will disable all third party applications you have installed. They will be restored when you reboot again.</string>
 
+    <!-- fly.gao add for display -->
+    <string name="display_category_title">Display</string>
+    <string name="resolutions">Resolutions</string>
 </resources>

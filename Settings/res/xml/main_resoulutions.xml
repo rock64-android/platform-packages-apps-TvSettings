@@ -1,0 +1,12 @@
+<!-- fly.gao  resoulutions for display -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/resolutions">
+    <ListPreference
+        android:key="main_resolutions"
+        android:persistent="false"
+        android:entries="@array/surround_sound_entries"
+        android:entryValues="@array/surround_sound_entry_values"
+        android:title="@string/resolutions"
+        android:summary="%s" />
+
+</PreferenceScreen>
