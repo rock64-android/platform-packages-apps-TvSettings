@@ -1443,4 +1443,9 @@
     <!-- fly.gao add for display -->
     <string name="display_category_title">Display</string>
     <string name="resolutions">Resolutions</string>
+    <string name="rk3399_resolutions">RK3399 resolutions</string>
+    <string name="display">Display</string>
+    <string name="resolution">Resolution</string>
+    <string name="display_devices">Display devices</string>
+    <string name="zoom">Zoom</string>
 </resources>

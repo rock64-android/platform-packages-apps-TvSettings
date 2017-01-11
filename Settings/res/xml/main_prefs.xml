@@ -42,10 +42,10 @@
             android:title="@string/device_sound"
             android:fragment="com.android.tv.settings.device.sound.SoundFragment" />
         <Preference
-            android:icon="@drawable/resolutions"
+            android:icon="@drawable/icon_display"
             android:key="displaies"
             android:title="@string/display_category_title"
-            android:fragment="com.android.tv.settings.device.sound.SoundFragment" />
+            android:fragment="com.android.tv.settings.display.DisplayFragment" />
         <Preference
             android:icon="@drawable/ic_adb"
             android:key="apps"
@@ -174,7 +174,7 @@
          <Preference
             android:icon="@drawable/resolutions"
             android:key="resolutions"
-            android:title="@string/resolutions"/>
+            android:title="@string/rk3399_resolutions"/>
     </PreferenceCategory>
 
 

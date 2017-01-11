@@ -55,6 +55,13 @@ public class MainResolutionsFragment extends Fragment implements OnItemClickList
 		initEvent();
 	}
 
+
+	@Override
+	public void onDestroy() {
+	    super.onDestroy();
+	    mDisplayManager.unregisterDisplayListener(this);
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();

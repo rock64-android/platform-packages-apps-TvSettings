@@ -661,4 +661,12 @@
     <string name="reboot_safemode_action" msgid="8129550438717110406">"重新启动并进入安全模式"</string>
     <string name="reboot_safemode_confirm" msgid="3329475617645192086">"您想重新启动并进入安全模式吗？"</string>
     <string name="reboot_safemode_desc" msgid="5031024337104679492">"这将停用您已安装的所有第三方应用。您必须再次重新启动才能恢复这些应用。"</string>
+
+    <string name="display_category_title">显示</string>
+    <string name="resolutions">分辨率</string>
+    <string name="display">显示</string>
+    <string name="resolution">分辨率</string>
+    <string name="display_devices">显示设备</string>
+    <string name="zoom">缩放</string>
+    <string name="rk3399_resolutions">RK3399分辨率</string>
 </resources>

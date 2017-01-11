@@ -593,6 +593,8 @@
         <activity
             android:name="com.android.tv.settings.displayoutput.MainResolutionsActivity"
             android:label="@string/resolutions"/>
+        <activity
+            android:name="com.android.tv.settings.display.ScreenScaleActivity"/>
     </application>
 
 </manifest>
