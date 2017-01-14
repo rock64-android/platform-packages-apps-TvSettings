@@ -89,7 +89,6 @@ public class MainFragment extends LeanbackPreferenceFragment {
     private Preference mAddAccessory;
     private Preference mNetworkPref;
     private Preference mSoundsPref;
-    private Preference mResolutionsPref;
     private final BroadcastReceiver mBCMReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -145,12 +144,11 @@ public class MainFragment extends LeanbackPreferenceFragment {
         mNetworkPref = findPreference(KEY_NETWORK);
         mSoundsPref = findPreference(KEY_SOUNDS);
         mAccountsGroup = (PreferenceGroup) findPreference(KEY_ACCOUNTS_CATEGORY);
-        mResolutionsPref = findPreference(KEY_RESOLUTIONS);
+        //mResolutionsPref = findPreference(KEY_RESOLUTIONS);
         final Preference inputPref = findPreference(KEY_INPUTS);
         if (inputPref != null) {
             inputPref.setVisible(mInputSettingNeeded);
         }
-        initEvent();
     }
 
     @Override
@@ -422,16 +420,4 @@ public class MainFragment extends LeanbackPreferenceFragment {
         return null;
     }
 
-
-    private void initEvent(){
-    	mResolutionsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(getActivity(), MainResolutionsActivity.class);
-				getActivity().startActivity(intent);
-				return false;
-			}
-		});
-    }
 }
