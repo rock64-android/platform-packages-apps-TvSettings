@@ -168,14 +168,4 @@
         </Preference>
     </PreferenceCategory>
 
-<!--     <PreferenceCategory
-        android:key="display"
-        android:title="@string/display_category_title">
-         <Preference
-            android:icon="@drawable/resolutions"
-            android:key="resolutions"
-            android:title="@string/rk3399_resolutions"/>
-    </PreferenceCategory> -->
-
-
 </PreferenceScreen>

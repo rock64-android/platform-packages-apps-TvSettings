@@ -1448,4 +1448,7 @@
     <string name="resolution">Resolution</string>
     <string name="display_devices">Display devices</string>
     <string name="zoom">Zoom</string>
+    <string name="confirm_dialog_title">Save Confirm</string>
+    <string name="confirm_dialog_message">Will cancel in</string>
+
 </resources>

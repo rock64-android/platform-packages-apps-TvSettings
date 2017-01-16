@@ -16,33 +16,22 @@
 
 package com.android.tv.settings.display;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.display.DisplayManager;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v14.preference.SwitchPreference;
 import android.support.v17.preference.LeanbackPreferenceFragment;
-import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
-import android.support.v7.preference.TwoStatePreference;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
-import android.widget.TextView;
 import android.os.DisplayOutputManager;
 import android.os.SystemProperties;
 import com.android.tv.settings.R;
@@ -54,6 +43,7 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
 	public static final String KEY_DISPLAY_DEVICE_CATEGORY = "display_device_category";
 	public static final String HDMI_PLUG_ACTION = "android.intent.action.HDMI_PLUGGED";
 	private PreferenceScreen mPreferenceScreen;
+	private static String mStrPlatform;
 	/**
 	 * rk_fb输出相关
 	 */
@@ -90,7 +80,12 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.display, null);
+        mStrPlatform = SystemProperties.get("ro.board.platform");
+        if (mStrPlatform.contains("3399")) {
+            setPreferencesFromResource(R.xml.display_drm, null);
+        } else {
+            setPreferencesFromResource(R.xml.display, null);
+        }
         initData();
         rebuildView();
     }
@@ -168,9 +163,9 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
     	Log.i(TAG, "rebuildView->displayInfos:" + displayInfos);
     	if(displayInfos.size() > 0){
     		for(DisplayInfo displayInfo : displayInfos){
-    			Intent intent = new Intent();
-    			intent.putExtra(ConstData.IntentKey.DISPLAY_INFO, displayInfo);
-    			getActivity().setIntent(intent);
+				Intent intent = new Intent();
+				intent.putExtra(ConstData.IntentKey.DISPLAY_INFO, displayInfo);
+				getActivity().setIntent(intent);
     			if(displayInfo.getDisplayId() == 0){
     				mMainDisplayPreference.setTitle(displayInfo.getDescription());
     				mDisplayDeviceCategory.addPreference(mMainDisplayPreference);
@@ -181,9 +176,6 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
     		}
     	}
     }
-
-
-
 
     /**
      * 获取所有外接显示设备信息,此方法已兼容rk_fb与DRM
@@ -202,16 +194,7 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
     	String platform = SystemProperties.get("ro.board.platform");
     	Display[] displays = mDisplayManager.getDisplays();
     	if(platform.contains("3399")){
-    		//使用DRM方式获取显示列表
-    		if(displays != null && displays.length > 0){
-    			for(Display display : displays){
-    				DisplayInfo displayInfo = new DisplayInfo();
-    				displayInfo.setDisplayId(display.getDisplayId());
-    				displayInfo.setDescription(display.getName());
-    				displayInfo.setModes(getStrModes(display.getSupportedModes()));
-    				displayInfos.add(displayInfo);
-    			}
-    		}
+			displayInfos.addAll(DrmDisplaySetting.getDisplayInfoList());
     	}else{
     		//使用rk_fb方式获取显示列表
     		int[] mainTypes = mDisplayOutputManager.getIfaceList(mDisplayOutputManager.MAIN_DISPLAY);
@@ -266,23 +249,6 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
     		Log.i(TAG, "invokeMethod->exception:" + e);
     	}
     	return result;
-    }
-
-
-    /**
-     * 从Display.Mode->String
-     * @param modes
-     * @return
-     */
-    private String[] getStrModes(Display.Mode[] modes){
-    	String[] strModes = new String[modes.length];
-    	for(int i = 0; i != modes.length; ++i){
-    		StringBuilder builder = new StringBuilder();
-    		builder.append(modes[i].getPhysicalWidth()).append("x")
-    		.append(modes[i].getPhysicalHeight()).append("-").append(modes[i].getRefreshRate());
-    		strModes[i] = builder.toString();
-    	}
-    	return strModes;
     }
 
 
@@ -345,51 +311,5 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
             rebuildView();
         }
 
-    }
-
-    /**
-     * 显示信息
-     * @author GaoFei
-     *
-     */
-    class DisplayInfo implements Serializable{
-    	private int displayId;
-    	private int type;
-    	private String description;
-    	private String[] modes;
-		public int getDisplayId() {
-			return displayId;
-		}
-		public void setDisplayId(int displayId) {
-			this.displayId = displayId;
-		}
-		public int getType() {
-			return type;
-		}
-		public void setType(int type) {
-			this.type = type;
-		}
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		public String[] getModes() {
-			return modes;
-		}
-		public void setModes(String[] modes) {
-			this.modes = modes;
-		}
-
-    	@Override
-    	public String toString() {
-    		StringBuilder builder = new StringBuilder();
-    		builder.append("displayId:").append(displayId).append("  ")
-    		.append("type:").append(type).append("  ")
-    		.append("description:").append(description).append("  ")
-    		.append("modes:").append(Arrays.toString(modes));
-    		return builder.toString();
-    	}
     }
 }

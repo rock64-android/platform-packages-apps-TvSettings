@@ -669,4 +669,7 @@
     <string name="display_devices">显示设备</string>
     <string name="zoom">缩放</string>
     <string name="rk3399_resolutions">RK3399分辨率</string>
+    <string name="confirm_dialog_title">保存确认</string>
+    <string name="confirm_dialog_message">将会取消</string>
+
 </resources>

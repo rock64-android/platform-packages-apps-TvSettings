@@ -76,7 +76,6 @@ public class MainFragment extends LeanbackPreferenceFragment {
     private static final String KEY_SPEECH_SETTINGS = "speech";
     private static final String KEY_SEARCH_SETTINGS = "search";
     private static final String KEY_ACCOUNTS_CATEGORY = "accounts";
-    private static final String KEY_RESOLUTIONS = "resolutions";
     private AuthenticatorHelper mAuthenticatorHelper;
     private BluetoothAdapter mBtAdapter;
     private ConnectivityListener mConnectivityListener;
@@ -144,7 +143,6 @@ public class MainFragment extends LeanbackPreferenceFragment {
         mNetworkPref = findPreference(KEY_NETWORK);
         mSoundsPref = findPreference(KEY_SOUNDS);
         mAccountsGroup = (PreferenceGroup) findPreference(KEY_ACCOUNTS_CATEGORY);
-        //mResolutionsPref = findPreference(KEY_RESOLUTIONS);
         final Preference inputPref = findPreference(KEY_INPUTS);
         if (inputPref != null) {
             inputPref.setVisible(mInputSettingNeeded);
