@@ -7,5 +7,6 @@ package com.android.tv.settings.data;
 public class ConstData {
 	public interface IntentKey{
 		String DISPLAY_INFO = "display_info";
+		String PLATFORM = "platform";
 	}
 }

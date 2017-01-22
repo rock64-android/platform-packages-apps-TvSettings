@@ -175,11 +175,13 @@ Preference.OnPreferenceClickListener{
         return true;
     }
 
-    
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if(preference == mZoomPreference) {
-            startActivity(new Intent(getActivity(), ScreenScaleActivity.class));
+            Intent screenScaleIntent = new Intent(getActivity(), ScreenScaleActivity.class);
+            screenScaleIntent.putExtra(ConstData.IntentKey.PLATFORM, mStrPlatform);
+            screenScaleIntent.putExtra(ConstData.IntentKey.DISPLAY_INFO, mDisplayInfo);
+            startActivity(screenScaleIntent);
         } else if (preference == mResolutionPreference) {
             updateResolutionValue();
         }

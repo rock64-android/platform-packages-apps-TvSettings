@@ -2,6 +2,8 @@ package com.android.tv.settings.display;
 
 import android.content.Context;
 import android.os.Handler;
+import android.R.bool;
+import android.R.integer;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Bundle;
@@ -25,10 +27,12 @@ import android.widget.TextView;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.RelativeLayout;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import com.android.tv.settings.R;
-
+import com.android.tv.settings.data.ConstData;
+import android.os.SystemProperties;
 public class ScreenScaleActivity extends Activity
 {
 	private final int RightButtonPressed = 0;
@@ -58,9 +62,25 @@ public class ScreenScaleActivity extends Activity
 	private int mDensityDpi = 0;
 	private int mDefaultDpi = 160;
 	private float mDpiRatio = 0;
-
-        private int mkeylast = -1;
-
+    private int mkeylast = -1;
+    public static final String PROPERTY_OVERSCAN_MAIN = "persist.sys.overscan.main";
+    public static final String PROPERTY_OVERSCAN_AUX = "persist.sys.overscan.aux";
+    /**
+     * 标识平台
+     */
+    private String mPlatform;
+    /**
+     * 当前设备的显示信息
+     */
+    private DisplayInfo mDisplayInfo;
+    /**
+     * 左侧缩放
+     */
+    private int mLeftScale = 100;
+    /**
+     * 底部缩放
+     */
+    private int mBottomScale = 100;
 	private void getScreenSize()
 	{
 		DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -192,7 +212,7 @@ public class ScreenScaleActivity extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
+		initData();
 		//full screen
 		hideSystemUI();
 
@@ -230,128 +250,50 @@ public class ScreenScaleActivity extends Activity
 			{
 				case R.id.button_right:
 					LOGD("button_right");
-					// add code here
-					if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).right + 1;
-					if (scalevalue > MAX_SCALE){
-						scalevalue = MAX_SCALE;
-					}
-					if(scalevalue >=0 )
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
-					}
+					rightClick(true);
 					break;
 				case R.id.button_left:
 					LOGD("button_left");
-					// add code here
-					if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).left - 1;
-					if (scalevalue < MIN_SCALE){
-						scalevalue = MIN_SCALE;
-					}
-					if(scalevalue >=0)
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
-					}
+					leftClick(true);
 					break;
 				case R.id.button_up:
 					LOGD("touch_up");
-					// add code here
-					if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).top - 1;
-					if (scalevalue < MIN_SCALE){
-						scalevalue = MIN_SCALE;
-					}
-					if(scalevalue >=0)
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
-					}
+					upClick(true);
 					break;
 				case R.id.button_down:
 					LOGD("touch_down");
-					// add code here
-					if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).bottom + 1;
-					if (scalevalue > MAX_SCALE){
-						scalevalue = MAX_SCALE;
-					}
-					if(scalevalue >=0 )
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
-					}
+					downClick(true);
 					break;
 			}
 		}
 	};
 
-	public boolean dispatchKeyEvent(KeyEvent event)
-	{
-    	int keyCode = event.getKeyCode();
-    	LOGD("keyCode = "+keyCode);
-    	int scalevalue;
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        LOGD("keyCode = " + keyCode);
+        int scalevalue;
         if (mkeylast != keyCode) {
-		mkeylast = keyCode;
-		switch(keyCode)
-		{
-			case KeyEvent.KEYCODE_DPAD_RIGHT:  // ˮƽ��������
-				mRightButton.setImageResource(R.drawable.button_right_pressed);
-				mHandler.removeMessages(RightButtonResume);
-				// add code here
-				if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).right + 1;
-					if (scalevalue > MAX_SCALE){
-						scalevalue = MAX_SCALE;
-					}
-					if(scalevalue >=0 )
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
-				}
-				mHandler.sendEmptyMessageDelayed(RightButtonResume,100);
-				break;
-			case KeyEvent.KEYCODE_DPAD_LEFT:   // ˮƽ�����С
-				mHandler.removeMessages(LeftButtonResume);
-				mLeftButton.setImageResource(R.drawable.button_left_pressed);
-				// add code here
-				if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).left - 1;
-					if (scalevalue < MIN_SCALE){
-						scalevalue = MIN_SCALE;
-					}
-					if(scalevalue >=0)
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
-				}
-				mHandler.sendEmptyMessageDelayed(LeftButtonResume,100);
-				break;
-			case KeyEvent.KEYCODE_DPAD_UP:     //  ��ֱ�����С
-				mHandler.removeMessages(UpButtonResume);
-				mUpButton.setImageResource(R.drawable.button_vertical_up_pressed);
-				// add code here
-				if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).top - 1;
-					if (scalevalue < MIN_SCALE){
-						scalevalue = MIN_SCALE;
-					}
-					if(scalevalue >=0)
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
-				}
-				mHandler.sendEmptyMessageDelayed(UpButtonResume,100);
-				break;
-			case KeyEvent.KEYCODE_DPAD_DOWN:   //  ��ֱ��������
-				mHandler.removeMessages(DownButtonResume);
-				mDownButton.setImageResource(R.drawable.button_vertical_down_pressed);
-				// add code here
-				if(mDisplayOutputManager != null) {
-					scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).bottom + 1;
-					if (scalevalue > MAX_SCALE){
-						scalevalue = MAX_SCALE;
-					}
-					if(scalevalue >=0 )
-						mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
-				}
-				mHandler.sendEmptyMessageDelayed(DownButtonResume,100);
-				break;
-		}
-             } else {
-		mkeylast = -1;
+            mkeylast = keyCode;
+            switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                rightClick(false);
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                leftClick(false);
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP:
+                upClick(false);
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                downClick(false);
+                break;
+            }
+        } else {
+            mkeylast = -1;
         }
 
-		return super.dispatchKeyEvent(event);
-	}
+        return super.dispatchKeyEvent(event);
+    }
 
 	private Handler mHandler = new Handler()
 	{
@@ -379,5 +321,145 @@ public class ScreenScaleActivity extends Activity
 	{
 		if(true)
 			Log.d("ScreenSettingActivity",msg);
+	}
+	private void rightClick(boolean isClick){
+        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+            int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).right + 1;
+            if (scalevalue > MAX_SCALE){
+                scalevalue = MAX_SCALE;
+            }
+            if(scalevalue >=0 ){
+                if(mDisplayInfo.getDisplayId() == 0){
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
+                }else{
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
+                }
+            }
+        }else if(mPlatform.contains("3399")){
+            mLeftScale += 1;
+            if(mLeftScale > MAX_SCALE)
+                mLeftScale = MAX_SCALE;
+            setOverScanProperty();
+        }
+        if(!isClick){
+            mRightButton.setImageResource(R.drawable.button_right_pressed);
+            mHandler.removeMessages(RightButtonResume);
+            mHandler.sendEmptyMessageDelayed(RightButtonResume,100);
+        }
+	}
+	private void leftClick(boolean isClick){
+        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+            int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).left - 1;
+            if (scalevalue < MIN_SCALE){
+                scalevalue = MIN_SCALE;
+            }
+            if(scalevalue >=0){
+                if(mDisplayInfo.getDisplayId() == 0){
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
+                }else{
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
+                }
+            }
+        }else if(mPlatform.contains("3399")){
+            mLeftScale -= 1;
+            if(mLeftScale < MIN_SCALE)
+                mLeftScale = MIN_SCALE;
+            setOverScanProperty();
+        }
+        if(!isClick){
+            mLeftButton.setImageResource(R.drawable.button_left_pressed);
+            mHandler.removeMessages(LeftButtonResume);
+            mHandler.sendEmptyMessageDelayed(LeftButtonResume,100);
+        }
+	}
+	private void upClick(boolean isClick){
+        // add code here
+        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+            int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).top - 1;
+            if (scalevalue < MIN_SCALE){
+                scalevalue = MIN_SCALE;
+            }
+            if(scalevalue >=0){
+                if(mDisplayInfo.getDisplayId() == 0){
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
+                }else{
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
+                }
+            }
+        }else if(mPlatform.contains("3399")){
+            mBottomScale -= 1;
+            if(mBottomScale < MIN_SCALE)
+                mBottomScale = MIN_SCALE;
+            setOverScanProperty();
+        }
+        if(!isClick){
+            mUpButton.setImageResource(R.drawable.button_vertical_up_pressed);
+            mHandler.removeMessages(UpButtonResume);
+            mHandler.sendEmptyMessageDelayed(UpButtonResume,100);
+        }
+	}
+	private void downClick(boolean isClick){
+        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+            int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).bottom + 1;
+            if (scalevalue > MAX_SCALE){
+                scalevalue = MAX_SCALE;
+            }
+            if(scalevalue >=0 ){
+                if(mDisplayInfo.getDisplayId() == 0){
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.MAIN_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
+                }else{
+                    mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
+                }
+            }
+        }else if(mPlatform.contains("3399")){
+            mBottomScale += 1;
+            if(mBottomScale > MAX_SCALE)
+                mBottomScale = MAX_SCALE;
+            setOverScanProperty();
+        }
+        if(!isClick){
+            mDownButton.setImageResource(R.drawable.button_vertical_down_pressed);
+            mHandler.removeMessages(DownButtonResume);
+            mHandler.sendEmptyMessageDelayed(DownButtonResume,100);
+        }
+	}
+	/**
+	 * 初始化数据
+	 */
+	public void initData(){
+	   mPlatform = getIntent().getStringExtra(ConstData.IntentKey.PLATFORM);
+	   mDisplayInfo = (DisplayInfo)getIntent().getSerializableExtra(ConstData.IntentKey.DISPLAY_INFO);
+	   String overScan;
+	   if(mPlatform.contains("3399")){
+	      if(mDisplayInfo.getDisplayId() == 0){
+	          overScan = SystemProperties.get(PROPERTY_OVERSCAN_MAIN);
+	      }else{
+	          overScan = SystemProperties.get(PROPERTY_OVERSCAN_AUX);
+	      }
+	      if(TextUtils.isEmpty(overScan))
+	              return;
+	      try{
+	          mLeftScale = Integer.parseInt(overScan.split(",")[0].split("\\s+")[1]);
+	      }catch (Exception e){
+	      }
+	      try{
+	          mBottomScale = Integer.parseInt(overScan.split(",")[3]);
+	      }catch (Exception e){
+	      }
+	   }
+	}
+	/**
+	 * 属性设置屏幕缩放
+	 */
+	private void setOverScanProperty(){
+	    StringBuilder builder = new StringBuilder();
+	    builder.append("overscan ").append(mLeftScale).
+	    append(",").append(mBottomScale).
+	    append(",").append(mLeftScale).
+	    append(",").append(mBottomScale);
+	    if(mDisplayInfo.getDisplayId() == 0)
+	        SystemProperties.set(PROPERTY_OVERSCAN_MAIN, builder.toString());
+	    else
+	        SystemProperties.set(PROPERTY_OVERSCAN_AUX, builder.toString());
 	}
 }
