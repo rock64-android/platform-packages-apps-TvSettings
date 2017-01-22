@@ -13,22 +13,36 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License
-  -->
+-->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/device_sound">
+    android:title="@string/device_sound" >
 
     <SwitchPreference
         android:key="sound_effects"
         android:persistent="false"
-        android:title="@string/device_sound_effects"/>
+        android:title="@string/device_sound_effects" />
 
     <ListPreference
-        android:key="surround_passthrough"
-        android:persistent="false"
         android:entries="@array/surround_sound_entries"
         android:entryValues="@array/surround_sound_entry_values"
-        android:title="@string/device_surround_sound"
-        android:summary="%s" />
+        android:key="surround_passthrough"
+        android:persistent="false"
+        android:summary="%s"
+        android:title="@string/device_surround_sound" />
+
+    <Preference
+        android:key="volume_settings"
+        android:title="@string/volume_settings" />
+
+    <Preference
+        android:key="audio_device"
+        android:persistent="false"
+        android:title="@string/audio_device" />
+
+   <!--  <Preference
+        android:key="dolby_settings"
+        android:summary="@string/close"
+        android:title="@string/dolby_settings" /> -->
 
 </PreferenceScreen>

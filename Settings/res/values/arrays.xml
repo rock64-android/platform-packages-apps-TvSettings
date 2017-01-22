@@ -247,4 +247,11 @@
         <item>720x480p-60</item>
     </string-array>
 
+    <!-- fly.gao audio device list -->
+     <string-array name="audio_device_list">
+        <item>Default Output</item>
+        <item>Spdif Passthrough</item>
+        <item>HDMI Bitstream</item>
+    </string-array>
+
 </resources>

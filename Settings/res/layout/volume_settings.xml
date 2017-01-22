@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="left"
+        android:gravity="left"
+        android:orientation="horizontal"
+        android:paddingLeft="50dp"
+        android:paddingTop="50dp" >
+
+        <TextView
+            android:id="@+id/volume_title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="left"
+            android:paddingBottom="10dip"
+            android:text="@string/volume_settings"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="left"
+        android:gravity="left" >
+
+        <ImageView
+            android:id="@+id/image_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/setting_listview_split" >
+        </ImageView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="125dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="75dp" >
+
+        <TextView
+            android:id="@+id/volume_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="center"
+            android:paddingBottom="10dip"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <!-- Used for the volume -->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="10dip"
+        android:paddingTop="25dip" >
+
+        <ImageView
+            android:id="@+id/media_mute_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:padding="10dip"
+            android:src="@drawable/volume_icon_empty" />
+
+        <SeekBar
+            android:id="@+id/volume_seekbar"
+            android:layout_width="390dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:layout_weight="5.10"
+            android:max="100"
+            android:paddingTop="2dip"
+            android:progress="10"
+            android:progressDrawable="@xml/seekbar_style"
+            android:thumb="@xml/thumb"/>
+
+        <ImageView
+            android:id="@+id/media_mute_button"
+            android:layout_width="57dp"
+            android:layout_height="57dp"
+            android:layout_gravity="center"
+            android:padding="10dip"
+            android:src="@drawable/volume_icon_full" />
+    </LinearLayout>
+
+</GridLayout>

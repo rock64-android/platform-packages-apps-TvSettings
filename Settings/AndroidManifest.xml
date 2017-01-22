@@ -595,6 +595,10 @@
             android:label="@string/resolutions"/>
         <activity
             android:name="com.android.tv.settings.display.ScreenScaleActivity"/>
+         <activity android:name="com.android.tv.settings.device.sound.VolumeSettingsActivity"
+                  android:theme="@style/Common_Activity_Dialog"/>
+         <activity android:name="com.android.tv.settings.device.sound.SoundDevicesManager"
+                  android:theme="@style/Common_Activity_Dialog"/>
     </application>
 
 </manifest>

@@ -18,6 +18,7 @@ package com.android.tv.settings.device.sound;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -40,9 +41,13 @@ public class SoundFragment extends LeanbackPreferenceFragment implements
     private static final String VAL_SURROUND_SOUND_AUTO = "auto";
     private static final String VAL_SURROUND_SOUND_ALWAYS = "always";
     private static final String VAL_SURROUND_SOUND_NEVER = "never";
-
+    private static final String KEY_VOLUME_SETTINGS = "volume_settings";
+    private static final String KEY_AUDIO_DEVICE = "audio_device";
+    private static final String KEY_DOLBY_SETTINGS = "dolby_settings";
     private AudioManager mAudioManager;
-
+    private Preference mVolumeSettingPreference;
+    private Preference mAudioDevicePreference;
+    private Preference mDoblyPreference;
     public static SoundFragment newInstance() {
         return new SoundFragment();
     }
@@ -64,6 +69,9 @@ public class SoundFragment extends LeanbackPreferenceFragment implements
                 (ListPreference) findPreference(KEY_SURROUND_PASSTHROUGH);
         surroundPref.setValue(getSurroundPassthroughSetting());
         surroundPref.setOnPreferenceChangeListener(this);
+        mVolumeSettingPreference = findPreference(KEY_VOLUME_SETTINGS);
+        mAudioDevicePreference = findPreference(KEY_AUDIO_DEVICE);
+        mDoblyPreference = findPreference(KEY_DOLBY_SETTINGS);
     }
 
     @Override
@@ -71,6 +79,12 @@ public class SoundFragment extends LeanbackPreferenceFragment implements
         if (TextUtils.equals(preference.getKey(), KEY_SOUND_EFFECTS)) {
             final TwoStatePreference soundPref = (TwoStatePreference) preference;
             setSoundEffectsEnabled(soundPref.isChecked());
+        }else if(TextUtils.equals(preference.getKey(), KEY_VOLUME_SETTINGS)){
+            Intent volumeSettingIntent = new Intent(getActivity(), VolumeSettingsActivity.class);
+            startActivity(volumeSettingIntent);
+        }else if(TextUtils.equals(preference.getKey(), KEY_AUDIO_DEVICE)){
+            Intent audioDevcieIntent = new Intent(getActivity(), SoundDevicesManager.class);
+            startActivity(audioDevcieIntent);
         }
         return super.onPreferenceTreeClick(preference);
     }

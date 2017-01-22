@@ -671,5 +671,15 @@
     <string name="rk3399_resolutions">RK3399分辨率</string>
     <string name="confirm_dialog_title">保存确认</string>
     <string name="confirm_dialog_message">将会取消</string>
-
+    <string name="volume_settings">音量设置</string>
+    <string name="audio_device">音频设备</string>
+    <string name="dolby_settings">杜比设置</string>
+    <string name="open">打开</string>
+    <string name="close">关闭</string>
+    <string name="sound_output_devices">音频输出设备</string>
+    <string name="sound_output_hdmi_passthrough">HDMI源码</string>
+    <string name="sound_output_spdif_passthrough">SPDIF源码</string>
+    <string name="sound_output_hdmi_multilpcm">HDMI Multi Lpcm</string>
+    <string name="sound_output_default">默认输出</string>
+    <string name="sound_devices_manager">音频设备管理</string>
 </resources>

@@ -216,4 +216,9 @@
         <item name="android:textSize">@dimen/activity_progress_title_text_size</item>
     </style>
 
+     <style name="Common_Activity_Dialog" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
+        <item name="android:windowBackground">@drawable/volume_setting_icon3</item>
+        <item name="android:height">70dp</item>
+    </style>
+
 </resources>

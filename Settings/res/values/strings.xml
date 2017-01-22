@@ -1450,5 +1450,15 @@
     <string name="zoom">Zoom</string>
     <string name="confirm_dialog_title">Save Confirm</string>
     <string name="confirm_dialog_message">Will cancel in</string>
-
+    <string name="volume_settings">Volume settings</string>
+    <string name="audio_device">Audio device</string>
+    <string name="dolby_settings">Dolby settings</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="sound_output_devices">Sound Output Devices</string>
+    <string name="sound_output_hdmi_passthrough">HDMI Bitstream</string>
+    <string name="sound_output_spdif_passthrough">Spdif Passthrough</string>
+    <string name="sound_output_hdmi_multilpcm">HDMI Multi Lpcm</string>
+    <string name="sound_output_default">Default Output</string>
+    <string name="sound_devices_manager">Sound Devices Manager</string>
 </resources>
