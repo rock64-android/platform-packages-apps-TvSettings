@@ -151,6 +151,12 @@ public class AppsFragment extends LeanbackPreferenceFragment {
             permissionsPreference.setIntent(new Intent(Intent.ACTION_MANAGE_PERMISSIONS));
             screen.addPreference(permissionsPreference);
         }
+        Preference appInstallPreference = new Preference(context);
+        appInstallPreference.setKey("AppInstall");
+        appInstallPreference.setTitle(R.string.device_apps_install);
+        appInstallPreference.setIntent(new Intent("com.rockchips.mediacenter.INSTALL_APP"));
+        screen.addPreference(appInstallPreference);
+
         mDownloadedPreferenceGroup = new PreferenceCategory(context);
         mDownloadedPreferenceGroup.setKey("DownloadedPreferenceGroup");
         mDownloadedPreferenceGroup.setTitle(R.string.apps_downloaded);
