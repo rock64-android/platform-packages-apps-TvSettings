@@ -1463,4 +1463,5 @@
     <string name="sound_output_hdmi_multilpcm">HDMI Multi Lpcm</string>
     <string name="sound_output_default">Default Output</string>
     <string name="sound_devices_manager">Sound Devices Manager</string>
+    <string name="more_settings">More Settings</string>
 </resources>
