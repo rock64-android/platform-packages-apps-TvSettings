@@ -506,13 +506,13 @@
             </intent-filter>
         </receiver>
 
-<!--         <receiver android:name=".device.storage.NewStorageActivity$DiskReceiver">
+        <receiver android:name=".device.storage.NewStorageActivity$DiskReceiver">
             <intent-filter>
                 <action android:name="android.os.storage.action.DISK_SCANNED" />
                 <action android:name="android.os.storage.action.VOLUME_STATE_CHANGED" />
                 <action android:name="com.google.android.tungsten.setupwraith.TV_SETTINGS_POST_SETUP" />
             </intent-filter>
-        </receiver> -->
+        </receiver>
 
         <service android:name=".device.storage.SettingsStorageService$Impl"
             android:exported="false" />
