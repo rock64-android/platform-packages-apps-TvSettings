@@ -33,7 +33,7 @@ public class TimedMessageWizardFragment extends MessageWizardFragment {
     }
 
     private static final int MSG_TIME_OUT = 1;
-    private static final int DEFAULT_TIME_OUT_MS = 3 * 1000;
+    private static final int DEFAULT_TIME_OUT_MS = 2 * 1000;
     private static final String KEY_TIME_OUT_DURATION = "time_out_duration";
 
     public static TimedMessageWizardFragment newInstance(String title) {

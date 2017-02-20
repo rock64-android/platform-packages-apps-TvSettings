@@ -25,6 +25,7 @@ import android.net.NetworkUtils;
 import android.net.ProxyInfo;
 import android.net.StaticIpConfiguration;
 import android.net.wifi.WifiConfiguration;
+import android.net.EthernetManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -33,6 +34,8 @@ import com.android.tv.settings.form.FormPage;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+
+import android.util.Log;
 
 /**
  * Handles the form page flow of setting advanced options.
@@ -47,6 +50,8 @@ public class AdvancedWifiOptionsFlow {
         boolean choiceChosen(FormPage formPage, int choiceResourceId);
     }
 
+    private static final String TAG = "AdvancedWifiOptionsFlow"; 
+    
     public static final int RESULT_UNKNOWN_PAGE = 0;
     public static final int RESULT_PAGE_HANDLED = 1;
     public static final int RESULT_ALL_PAGES_COMPLETE = 2;
@@ -66,7 +71,10 @@ public class AdvancedWifiOptionsFlow {
     private FormPage mNetworkPrefixLengthPage;
     private FormPage mDns1Page;
     private FormPage mDns2Page;
+    private FormPage mPppoeunamePage;
+    private FormPage mPppoepwdPage;
     private final IpConfiguration mIpConfiguration;
+    private final EthernetManager mEthManager;
     private final boolean mSettingsFlow;
 
     public AdvancedWifiOptionsFlow(Context context, PageHandler pageHandler,
@@ -79,6 +87,7 @@ public class AdvancedWifiOptionsFlow {
         mIpConfiguration = (initialConfiguration != null) ?
                 mInitialConfiguration.getIpConfiguration() :
                 new IpConfiguration();
+        mEthManager = (EthernetManager) context.getSystemService(Context.ETHERNET_SERVICE);
     }
 
     public AdvancedWifiOptionsFlow(Context context, PageHandler pageHandler, boolean askFirst,
@@ -91,6 +100,7 @@ public class AdvancedWifiOptionsFlow {
         mIpConfiguration = (initialConfiguration != null) ?
                 mInitialConfiguration.getIpConfiguration() :
                 new IpConfiguration();
+        mEthManager = (EthernetManager) context.getSystemService(Context.ETHERNET_SERVICE);
     }
 
     public WifiFormPageType getInitialPage() {
@@ -101,8 +111,12 @@ public class AdvancedWifiOptionsFlow {
         return WifiFormPageType.PROXY_SETTINGS;
     }
 
-   public WifiFormPageType getInitialIpSettingsPage() {
+    public WifiFormPageType getInitialIpSettingsPage() {
         return WifiFormPageType.IP_SETTINGS;
+    }
+    
+    public WifiFormPageType getInitialPppoeSettingsPage() {
+        return WifiFormPageType.PPPOE_USERNAME;
     }
 
     /**
@@ -171,7 +185,7 @@ public class AdvancedWifiOptionsFlow {
                 if (mPageHandler.choiceChosen(formPage, R.string.wifi_action_dhcp)) {
                     processIpSettings();
                     return RESULT_ALL_PAGES_COMPLETE;
-                } else {
+                }else{
                     mPageHandler.addPage(WifiFormPageType.IP_ADDRESS);
                 }
                 break;
@@ -208,6 +222,25 @@ public class AdvancedWifiOptionsFlow {
                 mPageHandler.removePage(mDns2Page);
                 mPageHandler.addPage(WifiFormPageType.IP_SETTINGS);
                 break;
+            case PPPOE_USERNAME:
+                mPppoeunamePage = formPage;
+                mPageHandler.addPage(WifiFormPageType.PPPOE_PASSWORD);
+                break;
+            case PPPOE_PASSWORD:
+                mPppoepwdPage = formPage;
+                int pppoeSettingsResult = processPppoeSettings();
+                if (pppoeSettingsResult == 0) {
+                    return RESULT_ALL_PAGES_COMPLETE;
+                }                    
+                break;
+            case PPPOE_CONNECT_FAILED:
+                mPageHandler.removePage(mPppoeunamePage);
+                mPageHandler.removePage(mPppoepwdPage);
+                if (mPageHandler.choiceChosen(formPage, R.string.wifi_action_try_again)){
+                    mPageHandler.addPage(WifiFormPageType.PPPOE_USERNAME);
+                     break; 
+                }
+                              
             default:
                 return RESULT_UNKNOWN_PAGE;
         }
@@ -269,6 +302,16 @@ public class AdvancedWifiOptionsFlow {
                     return createFormPage(getInitialDns(1).getHostAddress());
                 }
                 return mDns2Page;
+            case PPPOE_USERNAME:
+                if (mPppoeunamePage == null && getPppoeUserName() != null){
+                    return createFormPage(getPppoeUserName());
+                }
+                return mPppoeunamePage;
+            case PPPOE_PASSWORD:
+                if (mPppoepwdPage == null && getPppoePassword() != null){
+                    return createFormPage(getPppoePassword());
+                }
+                return mPppoepwdPage;
             case IP_SETTINGS_INVALID:
             case PROXY_SETTINGS_INVALID:
             default:
@@ -320,6 +363,22 @@ public class AdvancedWifiOptionsFlow {
     private LinkAddress getInitialLinkAddress() {
         try {
             return mInitialConfiguration.getIpConfiguration().getStaticIpConfiguration().ipAddress;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+    
+    private String getPppoeUserName(){
+       try {
+            return mEthManager.getConfiguration().pppoeAccount;
+        } catch (NullPointerException e) {
+            return null;
+        } 
+    }
+    
+    private String getPppoePassword(){
+        try {
+            return mEthManager.getConfiguration().pppoePassword;
         } catch (NullPointerException e) {
             return null;
         }
@@ -439,6 +498,17 @@ public class AdvancedWifiOptionsFlow {
         } else {
             mIpConfiguration.setStaticIpConfiguration(null);
         }
+        return 0;
+    }
+    
+    private int processPppoeSettings() {
+        Log.d(TAG,"processPppoeSettings");
+        String mPppoeuname = mPppoeunamePage.getDataSummary();
+        String mPppoepwd = mPppoepwdPage.getDataSummary();
+        mEthManager.disconnect("eth0");
+        mIpConfiguration.setIpAssignment(IpAssignment.PPPOE);
+        mIpConfiguration.pppoeAccount = mPppoeuname;
+        mIpConfiguration.pppoePassword = mPppoepwd;
         return 0;
     }
 }
