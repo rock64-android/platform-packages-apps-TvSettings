@@ -149,6 +149,11 @@ public class ConnectivityListener implements WifiTracker.WifiListener {
     public ConnectivityStatus getConnectivityStatus() {
         return mConnectivityStatus;
     }
+    
+    public boolean getConnectStatus(){
+        return mEthernetManager.getEthernetConnectState() 
+                == mEthernetManager.ETHER_STATE_CONNECTED;
+    }
 
     public String getWifiIpAddress() {
         if (mConnectivityStatus.isWifiConnected()) {

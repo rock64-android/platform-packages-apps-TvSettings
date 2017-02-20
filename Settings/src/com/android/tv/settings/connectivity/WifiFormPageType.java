@@ -101,6 +101,14 @@ public enum WifiFormPageType implements FormPageDisplayer.FormPageInfo {
     DNS2(FormPageDisplayer.DISPLAY_TYPE_TEXT_INPUT, R.string.title_wifi_dns2,
             R.string.wifi_dns2_description, TextInputWizardFragment.INPUT_TYPE_NO_SUGGESTIONS,
             R.string.wifi_dns2_hint),
+    PPPOE_USERNAME(FormPageDisplayer.DISPLAY_TYPE_TEXT_INPUT, R.string.title_wifi_pppoe_username,
+            R.string.wifi_pppoe_username_description, TextInputWizardFragment.INPUT_TYPE_NO_SUGGESTIONS),
+    PPPOE_PASSWORD(FormPageDisplayer.DISPLAY_TYPE_TEXT_INPUT, R.string.title_wifi_pppoe_password,
+            R.string.wifi_pppoe_password_description, TextInputWizardFragment.INPUT_TYPE_NO_SUGGESTIONS),
+    PPPOE_CONNECTING(FormPageDisplayer.DISPLAY_TYPE_LOADING, R.string.wifi_pppoe_connecting, 0),
+    PPPOE_CONNECT_FAILED(FormPageDisplayer.DISPLAY_TYPE_LIST_CHOICE,
+            R.string.title_pppoe_connect_failed, 0, new int[] {
+            R.string.wifi_action_try_again, R.string.wifi_action_return}),
     PROXY_SETTINGS_INVALID(FormPageDisplayer.DISPLAY_TYPE_LIST_CHOICE,
             R.string.title_wifi_proxy_settings_invalid, 0, new int[] {
             R.string.wifi_action_try_again }),

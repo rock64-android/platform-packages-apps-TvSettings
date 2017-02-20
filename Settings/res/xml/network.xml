@@ -66,5 +66,8 @@
         <Preference
             android:key="ethernet_dhcp"
             android:title="@string/title_wifi_ip_settings" />
+        <Preference
+            android:key="ethernet_pppoe"
+            android:title="@string/title_wifi_pppoe_settings" />
     </PreferenceCategory>
 </PreferenceScreen>

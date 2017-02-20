@@ -34,11 +34,14 @@ import com.android.tv.settings.R;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import android.util.Log;
 
 public class NetworkFragment extends LeanbackPreferenceFragment implements
         ConnectivityListener.Listener, ConnectivityListener.WifiNetworkListener,
         AccessPoint.AccessPointListener {
 
+    private static final String TAG = "NetworkFragment";
+            
     private static final String KEY_WIFI_ENABLE = "wifi_enable";
     private static final String KEY_WIFI_LIST = "wifi_list";
     private static final String KEY_WIFI_COLLAPSE = "wifi_collapse";
@@ -50,6 +53,7 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
     private static final String KEY_ETHERNET_STATUS = "ethernet_status";
     private static final String KEY_ETHERNET_PROXY = "ethernet_proxy";
     private static final String KEY_ETHERNET_DHCP = "ethernet_dhcp";
+    private static final String KEY_ETHERNET_PPPOE = "ethernet_pppoe";
 
     private static final int INITIAL_UPDATE_DELAY = 500;
 
@@ -66,6 +70,7 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
     private Preference mEthernetStatusPref;
     private Preference mEthernetProxyPref;
     private Preference mEthernetDhcpPref;
+    private Preference mEthernetPppoePref;
 
     private final Handler mHandler = new Handler();
     private long mNoWifiUpdateBeforeMillis;
@@ -131,6 +136,9 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
         mEthernetDhcpPref = findPreference(KEY_ETHERNET_DHCP);
         mEthernetDhcpPref.setIntent(EditIpSettingsActivity.createIntent(getContext(),
                 WifiConfiguration.INVALID_NETWORK_ID));
+        mEthernetPppoePref = findPreference(KEY_ETHERNET_PPPOE);
+        mEthernetPppoePref.setIntent(EditPppoeSettingsActivity.createIntent(getContext(),
+                WifiConfiguration.INVALID_NETWORK_ID));
     }
 
     @Override
@@ -190,10 +198,11 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
         mEthernetStatusPref.setVisible(ethernetAvailable);
         mEthernetProxyPref.setVisible(ethernetAvailable);
         mEthernetDhcpPref.setVisible(ethernetAvailable);
-
+        mEthernetPppoePref.setVisible(ethernetAvailable);     
+        
         if (ethernetAvailable) {
-            final boolean ethernetConnected =
-                    mConnectivityListener.getConnectivityStatus().isEthernetConnected();
+            final boolean ethernetConnected = mConnectivityListener.getConnectStatus();
+            Log.d(TAG,"ethernetConnected:" + ethernetConnected);
             mEthernetStatusPref.setTitle(ethernetConnected
                     ? R.string.connected : R.string.not_connected);
             mEthernetStatusPref.setSummary(mConnectivityListener.getEthernetIpAddress());

@@ -191,6 +191,14 @@
     <string name="title_wifi_network_prefix_length" msgid="4821632382990582038">"网络前缀长度："</string>
     <string name="title_wifi_dns1" msgid="8202712852864206601">"DNS 1:"</string>
     <string name="title_wifi_dns2" msgid="2673986973918499478">"DNS 2:"</string>
+    <string name="title_wifi_pppoe_settings">"PPPOE设置"</string>
+    <string name="title_wifi_pppoe_username">"用户名："</string>
+    <string name="wifi_pppoe_username_description">"pppoe用户名"</string>
+    <string name="title_wifi_pppoe_password">"密码："</string>
+    <string name="wifi_pppoe_password_description">"pppoe用户密码"</string>
+    <string name="wifi_pppoe_connecting">"pppoe正在连接..."</string>
+    <string name="title_pppoe_connect_failed">"pppoe连接失败"</string>
+    <string name="wifi_action_return">"返回"</string>
     <string name="title_wifi_proxy_settings_invalid" msgid="7380479044141040849">"代理设置无效"</string>
     <string name="title_wifi_ip_settings_invalid" msgid="7228948551397955678">"IP设置无效"</string>
     <string name="title_wifi_known_network" msgid="819998498700202436">"“<xliff:g id="SSID">%1$s</xliff:g>”是已保存的网络"</string>
