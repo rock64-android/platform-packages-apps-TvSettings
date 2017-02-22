@@ -598,7 +598,11 @@
          <activity android:name="com.android.tv.settings.device.sound.VolumeSettingsActivity"
                   android:theme="@style/Common_Activity_Dialog"/>
          <activity android:name="com.android.tv.settings.device.sound.SoundDevicesManager"
-                  android:theme="@style/Common_Activity_Dialog"/>
+                  android:theme="@style/Common_Activity_Dialog">
+              <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+         </activity>
     </application>
 
 </manifest>
