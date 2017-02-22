@@ -28,6 +28,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.EthernetManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.provider.Settings;
 
 import com.android.tv.settings.R;
 import com.android.tv.settings.form.FormPage;
@@ -369,19 +370,15 @@ public class AdvancedWifiOptionsFlow {
     }
     
     private String getPppoeUserName(){
-       try {
-            return mEthManager.getConfiguration().pppoeAccount;
-        } catch (NullPointerException e) {
-            return null;
-        } 
+       String uname = Settings.Secure.getString(mContext.getContentResolver(),
+				Settings.Secure.PPPOE_USERNAME);
+        return uname;
     }
     
     private String getPppoePassword(){
-        try {
-            return mEthManager.getConfiguration().pppoePassword;
-        } catch (NullPointerException e) {
-            return null;
-        }
+        String pwd = Settings.Secure.getString(mContext.getContentResolver(),
+				Settings.Secure.PPPOE_PSWD);
+        return pwd;       
     }
 
     private ProxyInfo getInitialProxyInfo() {
@@ -505,10 +502,17 @@ public class AdvancedWifiOptionsFlow {
         Log.d(TAG,"processPppoeSettings");
         String mPppoeuname = mPppoeunamePage.getDataSummary();
         String mPppoepwd = mPppoepwdPage.getDataSummary();
-        mEthManager.disconnect("eth0");
+        
+        Settings.Secure.putString(mContext.getContentResolver(),
+				Settings.Secure.PPPOE_USERNAME, mPppoeuname);
+		Settings.Secure.putString(mContext.getContentResolver(),
+				Settings.Secure.PPPOE_PSWD, mPppoepwd);
+        
         mIpConfiguration.setIpAssignment(IpAssignment.PPPOE);
         mIpConfiguration.pppoeAccount = mPppoeuname;
         mIpConfiguration.pppoePassword = mPppoepwd;
+        
+        mEthManager.disconnect("eth0");
         return 0;
     }
 }
