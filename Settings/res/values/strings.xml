@@ -1482,4 +1482,8 @@
     <string name="sound_output_default">Default Output</string>
     <string name="sound_devices_manager">Sound Devices Manager</string>
     <string name="more_settings">More Settings</string>
+
+    <!-- USB Settings -->
+    <string name="enable_usb">USB settings</string>
+    <string name="enable_usb_summary">Set the USB connection status</string>
 </resources>
