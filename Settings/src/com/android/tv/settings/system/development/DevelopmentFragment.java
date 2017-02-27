@@ -83,6 +83,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
     private static final String ENABLE_DEVELOPER = "development_settings_enable";
     private static final String ENABLE_ADB = "enable_adb";
     private static final String ENABLE_USB = "enable_usb";
+    private static final String ENABLE_INTERNET_ADB = "enable_internet_adb";
     private static final String CLEAR_ADB_KEYS = "clear_adb_keys";
     private static final String ENABLE_TERMINAL = "enable_terminal";
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -177,6 +178,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
     private SwitchPreference mEnableDeveloper;
     private SwitchPreference mEnableAdb;
     private SwitchPreference mEnableUsb;
+    private SwitchPreference mEnableInternetAdb;
     private Preference mClearAdbKeys;
     private SwitchPreference mEnableTerminal;
     private Preference mBugreport;
@@ -297,6 +299,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 findPreference(DEBUG_DEBUGGING_CATEGORY_KEY);
         mEnableAdb = findAndInitSwitchPref(ENABLE_ADB);
         mEnableUsb = findAndInitSwitchPref(ENABLE_USB);
+        mEnableInternetAdb = findAndInitSwitchPref(ENABLE_INTERNET_ADB);
         mClearAdbKeys = findPreference(CLEAR_ADB_KEYS);
         if (!SystemProperties.getBoolean("ro.adb.secure", false)) {
             if (debugDebuggingCategory != null) {
@@ -337,6 +340,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
         if (!mUm.isAdminUser()) {
             disableForUser(mEnableAdb);
             disableForUser(mEnableUsb);
+            disableForUser(mEnableInternetAdb);
             disableForUser(mClearAdbKeys);
             disableForUser(mEnableTerminal);
             disableForUser(mPassword);
@@ -1548,6 +1552,12 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 mUsbModeSetting.onUsbModeClick(UsbModeSettings.SLAVE_MODE);
             } else {
                 mUsbModeSetting.onUsbModeClick(UsbModeSettings.HOST_MODE);
+            }
+        } else if (preference == mEnableInternetAdb) {
+            if (mEnableInternetAdb.isChecked()){
+                SystemProperties.set("service.adb.tcp.port", "5555");
+            } else {
+                SystemProperties.set("service.adb.tcp.port", "0");
             }
         } else if (preference == mEnableTerminal) {
             final PackageManager pm = getActivity().getPackageManager();

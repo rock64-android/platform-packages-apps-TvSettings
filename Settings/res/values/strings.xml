@@ -1486,4 +1486,9 @@
     <!-- USB Settings -->
     <string name="enable_usb">USB settings</string>
     <string name="enable_usb_summary">Set the USB connection status</string>
+
+    <!-- Internet ADB -->
+    <string name="enable_internet_adb">Internet Adb</string>
+    <string name="enable_internet_adb_summary">enabled internet adb</string>
+
 </resources>
