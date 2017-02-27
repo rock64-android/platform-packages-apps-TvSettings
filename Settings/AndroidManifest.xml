@@ -231,7 +231,8 @@
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:excludeFromRecents="true"
             android:exported="true" >
-            <intent-filter>
+            <intent-filter
+                android:priority="10">
                 <action android:name="android.settings.SECURITY_SETTINGS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
