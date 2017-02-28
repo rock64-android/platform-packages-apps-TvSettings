@@ -443,11 +443,17 @@ public class NewStorageActivity extends Activity {
                     continue;
                 }
                 final DiskInfo disk = info.getDisk();
-                if (disk.isAdoptable()) {
-                    final Intent i = NewStorageActivity.getNewStorageLaunchIntent(context,
-                            volumeId, disk.getId());
-                    setPopupLaunchFlags(i);
-                    context.startActivity(i);
+                if (disk.isSd()) {
+                    //final Intent i = NewStorageActivity.getNewStorageLaunchIntent(context,
+                    //        volumeId, disk.getId());
+                    //setPopupLaunchFlags(i);
+                    //context.startActivity(i);
+                    Toast.makeText(context, R.string.sd_mounted, Toast.LENGTH_SHORT)
+                            .show();
+                    break;
+                }else if(disk.isUsb()){
+                    Toast.makeText(context, R.string.usb_mounted, Toast.LENGTH_SHORT)
+                            .show();
                     break;
                 }
             }

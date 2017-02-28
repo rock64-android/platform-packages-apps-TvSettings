@@ -691,4 +691,9 @@
     <string name="sound_output_hdmi_multilpcm">HDMI Multi Lpcm</string>
     <string name="sound_output_default">默认输出</string>
     <string name="sound_devices_manager">音频设备管理</string>
+
+    <!-- storage mount -->
+    <string name="sd_mounted">SD卡已挂载</string>
+    <string name="usb_mounted">U盘已挂载 </string>
+
 </resources>

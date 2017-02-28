@@ -1491,4 +1491,8 @@
     <string name="enable_internet_adb">Internet Adb</string>
     <string name="enable_internet_adb_summary">enabled internet adb</string>
 
+    <!-- storage mount -->
+    <string name="sd_mounted">sd is mounted</string>
+    <string name="usb_mounted">usb is mounted</string>
+
 </resources>
