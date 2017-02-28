@@ -1486,6 +1486,8 @@
     <!-- USB Settings -->
     <string name="enable_usb">USB settings</string>
     <string name="enable_usb_summary">Set the USB connection status</string>
+    <string name="usb_connect_to_computer">Connect to Computer</string>
+    <string name="usb_disconnect_to_computer">Disconnect to Computer</string>
 
     <!-- Internet ADB -->
     <string name="enable_internet_adb">Internet Adb</string>

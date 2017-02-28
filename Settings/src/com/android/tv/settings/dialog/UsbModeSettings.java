@@ -16,20 +16,24 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageEventListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.SystemProperties;
+import android.text.TextUtils;
 
 import android.util.Log;
 
 public class UsbModeSettings
 {
     private static final String TAG = "UsbModeSettings";
-    public static final String	HOST_MODE = new String("1");
-    public static final String	SLAVE_MODE = new String("2");
+    public static final String HOST_MODE = new String("1");
+    public static final String SLAVE_MODE = new String("2");
+    private static final String filename_rk3399 = "/sys/kernel/debug/usb@fe800000/rk_usb_force_mode";
+    private static final String filename_rk3328 = "/sys/bus/platform/drivers/usb20_otg/force_usb_mode";
 
     private File file = null;
 
     private StorageManager mStorageManager = null;
     private String mMode = null;
-
+    private String mSocName = null;
 
     private Context mContext;
 
@@ -38,13 +42,20 @@ public class UsbModeSettings
     public UsbModeSettings(Context context)
     {
         mContext = context;
-
+        mSocName = SystemProperties.get("sys.rk.soc");
+        if(TextUtils.isEmpty(mSocName))
+            mSocName = SystemProperties.get("ro.board.platform");
+        if(!TextUtils.isEmpty(mSocName) && mSocName.contains("rk3399")){
+            file = new File(filename_rk3399);
+        }else{
+            file = new File(filename_rk3328);
+        }
         mStorageManager = (StorageManager)mContext.getSystemService(Context.STORAGE_SERVICE);
-        file = new File("/sys/bus/platform/drivers/usb20_otg/force_usb_mode");
+        checkFile();
     }
 
     public boolean getDefaultValue(){
-        if(file.exists())
+        if(checkFile())
         {
             Log.d("UsbModeSelect","/data/otg.cfg not exist,but temp file exist");
             mMode = ReadFromFile(file);
@@ -63,7 +74,7 @@ public class UsbModeSettings
 
     private String ReadFromFile(File file)
     {
-        if((file != null) && file.exists())
+        if(checkFile())
         {
             try
             {
@@ -85,9 +96,9 @@ public class UsbModeSettings
 
     private void Write2File(File file,String mode)
     {
-        Log.d("UsbModeSelect","Write2File,write mode = "+mode);
-        if((file == null) || (!file.exists()) || (mode == null))
+        if(!checkFile() || (mode == null) )
             return ;
+        Log.d("UsbModeSelect","Write2File,write mode = "+mode);
 
         try
         {
@@ -140,4 +151,25 @@ public class UsbModeSettings
             mLock = false;
         }
     };
+
+    private boolean checkFile(){
+        if(file == null){
+            Log.e(TAG, "file is null pointer");
+            return false;
+        }
+        String fileName = file.getName();
+        if(!file.exists()){
+            Log.e(TAG, fileName + " not exist!!!");
+            return false;
+        }
+        if(!file.canRead()){
+            Log.e(TAG, fileName + " can't read!!!");
+            return false;
+        }
+        if(!file.canWrite()){
+            Log.e(TAG, fileName + " can't write!!!");
+            return false;
+        }
+        return true;
+    }
 }

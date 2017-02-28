@@ -270,6 +270,11 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
         super.onCreate(icicle);
         mUsbModeSetting = new UsbModeSettings(getPreferenceManager().getContext());
         mEnableUsb.setChecked(mUsbModeSetting.getDefaultValue());
+        if (mEnableUsb.isChecked()){
+            mEnableUsb.setSummary(R.string.usb_connect_to_computer);
+        } else {
+            mEnableUsb.setSummary(R.string.usb_disconnect_to_computer);
+        }
     }
 
     @Override
@@ -1550,8 +1555,10 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
         } else if (preference == mEnableUsb) {
             if (mEnableUsb.isChecked()){
                 mUsbModeSetting.onUsbModeClick(UsbModeSettings.SLAVE_MODE);
+                mEnableUsb.setSummary(R.string.usb_connect_to_computer);
             } else {
                 mUsbModeSetting.onUsbModeClick(UsbModeSettings.HOST_MODE);
+                mEnableUsb.setSummary(R.string.usb_disconnect_to_computer);
             }
         } else if (preference == mEnableInternetAdb) {
             if (mEnableInternetAdb.isChecked()){
