@@ -67,7 +67,10 @@ Preference.OnPreferenceClickListener{
      * 显示管理
      */
     protected DisplayManager mDisplayManager;
-
+    /**
+    * 原来的分辨率
+    */
+    private String mOldResolution;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +87,7 @@ Preference.OnPreferenceClickListener{
         initData();
         initView();
         initEvent();
-        updateResolutionValue();
+        //updateResolutionValue();
     }
 
     @Override
@@ -148,6 +151,8 @@ Preference.OnPreferenceClickListener{
             }
             if(resolutionValue != null)
                 mResolutionPreference.setValue(resolutionValue);
+            if(mOldResolution == null)
+                mOldResolution = resolutionValue;
         }
     }
 
@@ -167,8 +172,10 @@ Preference.OnPreferenceClickListener{
                     Log.i(TAG, "onPreferenceChange->exception:" + e);
                 }
 
-                if(displayOutputManager != null)
+                if(displayOutputManager != null){
                     displayOutputManager.setMode(mDisplayInfo.getDisplayId(), mDisplayInfo.getType(), (String)obj);
+                    showConfirmSetModeDialog();
+                }
             }
 
         }
@@ -183,7 +190,7 @@ Preference.OnPreferenceClickListener{
             screenScaleIntent.putExtra(ConstData.IntentKey.DISPLAY_INFO, mDisplayInfo);
             startActivity(screenScaleIntent);
         } else if (preference == mResolutionPreference) {
-            updateResolutionValue();
+            //updateResolutionValue();
         }
         return true;
     }
@@ -194,7 +201,25 @@ Preference.OnPreferenceClickListener{
         DialogFragment df = ConfirmSetModeDialogFragment.newInstance(mDisplayInfo, new ConfirmSetModeDialogFragment.OnDialogDismissListener() {
             @Override
             public void onDismiss(boolean isok) {
-                updateResolutionValue();
+                Log.i(TAG, "showConfirmSetModeDialog->onDismiss->isok:" + isok);
+                Log.i(TAG, "showConfirmSetModeDialog->onDismiss->mOldResolution:" + mOldResolution);
+                if(mStrPlatform.contains("3399"))
+                    updateResolutionValue();
+                else{
+                    DisplayOutputManager displayOutputManager = null;
+                    try{
+                        displayOutputManager = new DisplayOutputManager();
+                    }catch (Exception e){
+                        Log.i(TAG, "onPreferenceChange->exception:" + e);
+                    }
+                    if(isok && displayOutputManager != null){
+                        displayOutputManager.saveConfig();
+                    }else if(!isok && displayOutputManager != null && mOldResolution != null){
+                        //还原原来的分辨率
+                        displayOutputManager.setMode(mDisplayInfo.getDisplayId(), mDisplayInfo.getType(), mOldResolution);
+                    }
+                    updateResolutionValue();
+                }
             }
         });
         df.show(getFragmentManager(), "ConfirmDialog");
