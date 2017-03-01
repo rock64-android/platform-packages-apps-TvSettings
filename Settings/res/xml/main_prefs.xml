@@ -117,7 +117,7 @@
             android:fragment="com.android.tv.settings.system.AccessibilityFragment" />
 
         <Preference
-            android:icon="@drawable/ic_settings_app_icon"
+            android:icon="@drawable/ic_more_settings"
             android:key="moresettings"
             android:title="@string/more_settings" >
             <intent android:action="android.settings.SETTINGS" />

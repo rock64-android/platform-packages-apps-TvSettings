@@ -692,6 +692,9 @@
     <string name="sound_output_default">默认输出</string>
     <string name="sound_devices_manager">音频设备管理</string>
 
+    <!-- More Settins -->
+    <string name="more_settings">更多设置</string>
+
     <!-- USB Settings -->
     <string name="enable_usb">USB连接状态</string>
     <string name="enable_usb_summary">设置USB 连接状态</string>
