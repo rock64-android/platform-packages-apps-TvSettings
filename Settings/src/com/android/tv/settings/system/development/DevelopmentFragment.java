@@ -275,6 +275,12 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
         } else {
             mEnableUsb.setSummary(R.string.usb_disconnect_to_computer);
         }
+        String internetADB = SystemProperties.get("persist.internet.adb.enable", "0");
+        if(internetADB.equals("1")){
+            mEnableInternetAdb.setChecked(true);
+        }else{
+            mEnableInternetAdb.setChecked(false);
+        }
     }
 
     @Override
@@ -1562,9 +1568,9 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
             }
         } else if (preference == mEnableInternetAdb) {
             if (mEnableInternetAdb.isChecked()){
-                SystemProperties.set("service.adb.tcp.port", "5555");
+                SystemProperties.set("persist.internet.adb.enable", "1");
             } else {
-                SystemProperties.set("service.adb.tcp.port", "0");
+                SystemProperties.set("persist.internet.adb.enable", "0");
             }
         } else if (preference == mEnableTerminal) {
             final PackageManager pm = getActivity().getPackageManager();
