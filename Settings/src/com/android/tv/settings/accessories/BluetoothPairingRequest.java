@@ -17,9 +17,11 @@
 package com.android.tv.settings.accessories;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothClass;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * BluetoothPairingRequest is a receiver for any Bluetooth pairing request. It
@@ -27,6 +29,7 @@ import android.content.Intent;
  * confirmation entry dialog.
  */
 public final class BluetoothPairingRequest extends BroadcastReceiver {
+    static final String TAG = "BluetoothPairingRequest";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -40,6 +43,14 @@ public final class BluetoothPairingRequest extends BroadcastReceiver {
                 intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
         int type = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT,
                 BluetoothDevice.ERROR);
+
+        int majorDeviceClass = device.getBluetoothClass().getMajorDeviceClass();
+        if (majorDeviceClass != BluetoothClass.Device.Major.PERIPHERAL &&
+            majorDeviceClass != BluetoothClass.Device.Major.AUDIO_VIDEO) {
+            Log.d(TAG, "Not peripheral or audio device, skip here.");
+            return;
+        }
+
         Intent pairingIntent = new Intent();
         pairingIntent.setClass(context, BluetoothPairingDialog.class);
         pairingIntent.putExtra(BluetoothDevice.EXTRA_DEVICE, device);
