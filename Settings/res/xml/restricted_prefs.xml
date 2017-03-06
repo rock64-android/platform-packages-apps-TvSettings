@@ -48,7 +48,7 @@
             android:fragment="com.android.tv.settings.system.AccessibilityFragment" />
     </PreferenceCategory>
 
-    <!--PreferenceCategory
+    <PreferenceCategory
         android:key="accessories"
         android:title="@string/header_category_accessories">
         <Preference
@@ -59,7 +59,7 @@
                 android:targetClass="com.android.tv.settings.accessories.AddAccessoryActivity"
                 android:targetPackage="com.android.tv.settings" />
         </Preference>
-    </PreferenceCategory-->
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="personal"
         android:title="@string/header_category_personal">
