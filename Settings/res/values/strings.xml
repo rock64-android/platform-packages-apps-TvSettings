@@ -1496,4 +1496,8 @@
     <string name="sd_mounted">sd is mounted</string>
     <string name="usb_mounted">usb is mounted</string>
 
+    <!-- abc -->
+    <string name="enable_abc">open android bug collector</string>
+    <string name="enable_abc_summary" >"Each whole log is saved to the /data/syslog directory, you can use ADB pull export it"</string>
+
 </resources>

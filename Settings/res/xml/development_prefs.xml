@@ -104,6 +104,12 @@
             android:summary="@string/enable_internet_adb_summary"
             android:fragment="com.android.tv.settings.system.development.AdbDialog" />
 
+        <SwitchPreference
+            android:key="enable_abc"
+            android:title="@string/enable_abc"
+            android:summary="@string/enable_abc_summary"
+            android:fragment="com.android.tv.settings.system.development.AdbDialog" />
+
         <Preference android:key="clear_adb_keys"
             android:title="@string/clear_adb_keys"
             android:fragment="com.android.tv.settings.system.development.AdbKeysDialog" />

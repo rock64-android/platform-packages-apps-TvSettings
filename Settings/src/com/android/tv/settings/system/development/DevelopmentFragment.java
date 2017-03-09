@@ -84,6 +84,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
     private static final String ENABLE_ADB = "enable_adb";
     private static final String ENABLE_USB = "enable_usb";
     private static final String ENABLE_INTERNET_ADB = "enable_internet_adb";
+    private static final String ENABLE_ABC = "enable_abc";
     private static final String CLEAR_ADB_KEYS = "clear_adb_keys";
     private static final String ENABLE_TERMINAL = "enable_terminal";
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -179,6 +180,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
     private SwitchPreference mEnableAdb;
     private SwitchPreference mEnableUsb;
     private SwitchPreference mEnableInternetAdb;
+    private SwitchPreference mEnableAbc;
     private Preference mClearAdbKeys;
     private SwitchPreference mEnableTerminal;
     private Preference mBugreport;
@@ -311,6 +313,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
         mEnableAdb = findAndInitSwitchPref(ENABLE_ADB);
         mEnableUsb = findAndInitSwitchPref(ENABLE_USB);
         mEnableInternetAdb = findAndInitSwitchPref(ENABLE_INTERNET_ADB);
+        mEnableAbc = findAndInitSwitchPref(ENABLE_ABC);
         mClearAdbKeys = findPreference(CLEAR_ADB_KEYS);
         if (!SystemProperties.getBoolean("ro.adb.secure", false)) {
             if (debugDebuggingCategory != null) {
@@ -352,6 +355,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
             disableForUser(mEnableAdb);
             disableForUser(mEnableUsb);
             disableForUser(mEnableInternetAdb);
+            disableForUser(mEnableAbc);
             disableForUser(mClearAdbKeys);
             disableForUser(mEnableTerminal);
             disableForUser(mPassword);
@@ -610,6 +614,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 Settings.Global.DEBUG_VIEW_ATTRIBUTES, 0) != 0);
         updateSwitchPreference(mForceAllowOnExternal, Settings.Global.getInt(cr,
                 Settings.Global.FORCE_ALLOW_ON_EXTERNAL, 0) != 0);
+        updateSwitchPreference(mEnableAbc,(SystemProperties.getInt("sys.abc_switch",0)) != 0);
         updateHdcpValues();
         updatePasswordSummary();
         updateDebuggerOptions();
@@ -1571,6 +1576,14 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 SystemProperties.set("persist.internet.adb.enable", "1");
             } else {
                 SystemProperties.set("persist.internet.adb.enable", "0");
+            }
+        } else if (preference == mEnableAbc) {
+            if(SystemProperties.getInt("sys.abc_switch",0) == 1){
+                Log.d(TAG, "set sys.abc_switch 0");
+                SystemProperties.set("sys.abc_switch","0");
+            }else{
+                Log.d(TAG, "set sys.abc_switch 1");
+                SystemProperties.set("sys.abc_switch","1");
             }
         } else if (preference == mEnableTerminal) {
             final PackageManager pm = getActivity().getPackageManager();
