@@ -614,7 +614,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 Settings.Global.DEBUG_VIEW_ATTRIBUTES, 0) != 0);
         updateSwitchPreference(mForceAllowOnExternal, Settings.Global.getInt(cr,
                 Settings.Global.FORCE_ALLOW_ON_EXTERNAL, 0) != 0);
-        updateSwitchPreference(mEnableAbc,(SystemProperties.getInt("sys.abc_switch",0)) != 0);
+        updateSwitchPreference(mEnableAbc,(SystemProperties.getInt("modify abc property to persist",0)) != 0);
         updateHdcpValues();
         updatePasswordSummary();
         updateDebuggerOptions();
@@ -1578,12 +1578,12 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 SystemProperties.set("persist.internet.adb.enable", "0");
             }
         } else if (preference == mEnableAbc) {
-            if(SystemProperties.getInt("sys.abc_switch",0) == 1){
-                Log.d(TAG, "set sys.abc_switch 0");
-                SystemProperties.set("sys.abc_switch","0");
+            if(SystemProperties.getInt("modify abc property to persist",0) == 1){
+                Log.d(TAG, "set modify abc property to persist 0");
+                SystemProperties.set("modify abc property to persist","0");
             }else{
-                Log.d(TAG, "set sys.abc_switch 1");
-                SystemProperties.set("sys.abc_switch","1");
+                Log.d(TAG, "set modify abc property to persist 1");
+                SystemProperties.set("modify abc property to persist","1");
             }
         } else if (preference == mEnableTerminal) {
             final PackageManager pm = getActivity().getPackageManager();
