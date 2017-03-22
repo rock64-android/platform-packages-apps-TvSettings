@@ -161,6 +161,8 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
 
     private static final String PERSISTENT_DATA_BLOCK_PROP = "ro.frp.pst";
 
+    private static final String PERSIST_RK_ABC_SWITCH = "persist.rk.abc_switch";
+
     private static String DEFAULT_LOG_RING_BUFFER_SIZE_IN_BYTES = "262144"; // 256K
 
     private static final int[] MOCK_LOCATION_APP_OPS = new int[] {AppOpsManager.OP_MOCK_LOCATION};
@@ -614,7 +616,7 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 Settings.Global.DEBUG_VIEW_ATTRIBUTES, 0) != 0);
         updateSwitchPreference(mForceAllowOnExternal, Settings.Global.getInt(cr,
                 Settings.Global.FORCE_ALLOW_ON_EXTERNAL, 0) != 0);
-        updateSwitchPreference(mEnableAbc,(SystemProperties.getInt("modify abc property to persist",0)) != 0);
+        updateSwitchPreference(mEnableAbc,(SystemProperties.getInt(PERSIST_RK_ABC_SWITCH,0)) != 0);
         updateHdcpValues();
         updatePasswordSummary();
         updateDebuggerOptions();
@@ -1578,12 +1580,12 @@ public class DevelopmentFragment extends LeanbackPreferenceFragment
                 SystemProperties.set("persist.internet.adb.enable", "0");
             }
         } else if (preference == mEnableAbc) {
-            if(SystemProperties.getInt("modify abc property to persist",0) == 1){
+            if(SystemProperties.getInt(PERSIST_RK_ABC_SWITCH,0) == 1){
                 Log.d(TAG, "set modify abc property to persist 0");
-                SystemProperties.set("modify abc property to persist","0");
+                SystemProperties.set(PERSIST_RK_ABC_SWITCH,"0");
             }else{
                 Log.d(TAG, "set modify abc property to persist 1");
-                SystemProperties.set("modify abc property to persist","1");
+                SystemProperties.set(PERSIST_RK_ABC_SWITCH,"1");
             }
         } else if (preference == mEnableTerminal) {
             final PackageManager pm = getActivity().getPackageManager();
