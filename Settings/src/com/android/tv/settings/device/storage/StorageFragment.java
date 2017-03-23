@@ -154,7 +154,9 @@ public class StorageFragment extends LeanbackPreferenceFragment {
 
         final String description = mStorageManager.getBestVolumeDescription(mVolumeInfo);
 
-        final boolean privateInternal = VolumeInfo.ID_PRIVATE_INTERNAL.equals(mVolumeInfo.getId());
+        //remove erase sd.
+        //final boolean privateInternal = VolumeInfo.ID_PRIVATE_INTERNAL.equals(mVolumeInfo.getId());
+        final boolean privateInternal = true;
         final boolean isPrivate = mVolumeInfo.getType() == VolumeInfo.TYPE_PRIVATE;
 
         mEjectPref.setVisible(!privateInternal);
