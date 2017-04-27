@@ -215,8 +215,9 @@ CompoundButton.OnCheckedChangeListener{
                 .setEnabled(mEditing ? valid : validate(false));*/
         mBtnOK.setEnabled(mEditing ? valid : validate(false));
         // Workaround to resize the dialog for the input method.
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE |
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+       /* getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE |
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);*/
+        updateFocus();
 	}
 
 
@@ -249,6 +250,7 @@ CompoundButton.OnCheckedChangeListener{
     public void onClick(View view) {
         if (view == mShowOptions) {
             showAdvancedOptions();
+            updateFocus();
         }
         VpnProfile profile = getProfile();
         if (view == mBtnOK) {
@@ -363,6 +365,7 @@ CompoundButton.OnCheckedChangeListener{
                 mView.findViewById(R.id.ipsec_peer).setVisibility(View.VISIBLE);
                 break;
         }
+        updateFocus();
     }
 
     private boolean validate(boolean editing) {
@@ -552,5 +555,53 @@ CompoundButton.OnCheckedChangeListener{
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
     	super.onConfigurationChanged(newConfig);
+    }
+
+    private void updateFocus(){
+    	if(!mEditing){
+    		mPassword.setNextFocusDownId(R.id.save_login);
+    		mAlwaysOnVpn.setNextFocusDownId(R.id.btn_ok);
+    	}else if(!mExists){
+    		mName.setNextFocusDownId(R.id.type);
+			mType.setNextFocusDownId(mServer.getId());
+    		mPassword.setNextFocusDownId(R.id.always_on_vpn);
+    		mAlwaysOnVpn.setNextFocusDownId(R.id.btn_ok);
+    		switch (mType.getSelectedItemPosition()) {
+			case 0:
+				mServer.setNextFocusDownId(mMppe.getId());
+				mAlwaysOnVpn.setNextFocusDownId(mBtnOK.getId());
+				break;
+			case 1:case 2:
+				mServer.setNextFocusDownId(mL2tpSecret.getId());
+				if(mShowOptions.getVisibility() == View.VISIBLE)
+					mIpsecSecret.setNextFocusDownId(mShowOptions.getId());
+				else
+					mIpsecSecret.setNextFocusDownId(mSearchDomains.getId());
+				break;
+			case 3:
+				mServer.setNextFocusDownId(mIpsecIdentifier.getId());
+				if(mShowOptions.getVisibility() == View.VISIBLE)
+					mIpsecSecret.setNextFocusDownId(mShowOptions.getId());
+				else
+					mIpsecSecret.setNextFocusDownId(mSearchDomains.getId());
+				break;
+			case 4:
+				mServer.setNextFocusDownId(mIpsecUserCert.getId());
+				if(mShowOptions.getVisibility() == View.VISIBLE)
+					mIpsecServerCert.setNextFocusDownId(mShowOptions.getId());
+				else
+					mIpsecServerCert.setNextFocusDownId(mSearchDomains.getId());
+				break;
+			case 5:
+				mServer.setNextFocusDownId(mIpsecCaCert.getId());
+				if(mShowOptions.getVisibility() == View.VISIBLE)
+					mIpsecServerCert.setNextFocusDownId(mShowOptions.getId());
+				else
+					mIpsecServerCert.setNextFocusDownId(mSearchDomains.getId());
+				break;
+			default:
+				break;
+			}
+    	}
     }
 }
