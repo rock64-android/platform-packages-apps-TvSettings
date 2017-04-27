@@ -8,5 +8,8 @@ public class ConstData {
 	public interface IntentKey{
 		String DISPLAY_INFO = "display_info";
 		String PLATFORM = "platform";
+		String VPN_PROFILE = "vpn_profile";
+		String VPN_EXIST = "vpn_exist";
+		String VPN_EDITING = "vpn_editing";
 	}
 }

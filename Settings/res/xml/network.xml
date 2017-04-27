@@ -70,4 +70,23 @@
             android:key="ethernet_pppoe"
             android:title="@string/title_wifi_pppoe_settings" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:key="vpn"
+        android:title="@string/vpn" >
+         <Preference
+            android:key="vpn_create"
+            android:title="@string/create_vpn" >
+            <intent
+                android:targetClass="com.android.tv.settings.vpn.VpnCreateActivity"
+                android:targetPackage="com.android.tv.settings" />
+        </Preference> 
+      <!--   <Preference 
+            android:key="edit_vpn"
+            android:title="@string/edit_vpn"
+            android:fragment="com.android.tv.settings.vpn.VpnEditFragment"/> -->
+    </PreferenceCategory>
+
+     <PreferenceCategory 
+            android:key="avaliable_vpns"
+            android:title="@string/avaliable_vpns"/>
 </PreferenceScreen>

@@ -26,22 +26,74 @@ import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.TwoStatePreference;
-
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.settingslib.wifi.AccessPointPreference;
+import java.util.List;
+import com.android.internal.net.VpnProfile;
 import com.android.tv.settings.R;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import android.util.Log;
+import android.security.Credentials;
+import android.security.KeyStore;
+import android.net.IConnectivityManager;
+import android.os.ServiceManager;
+import android.util.ArraySet;
+import java.util.Map;
+
+import com.android.tv.settings.data.ConstData;
+import com.android.tv.settings.vpn.*;
+import android.annotation.UiThread;
+import android.annotation.WorkerThread;
+import android.app.AppOpsManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager.NetworkCallback;
+import android.net.ConnectivityManager;
+import android.net.IConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.UserHandle;
+import android.os.UserManager;
+import android.security.Credentials;
+import android.security.KeyStore;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceGroup;
+import android.support.v7.preference.PreferenceScreen;
+import android.util.ArrayMap;
+import android.util.ArraySet;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toolbar;
+import com.android.internal.logging.MetricsProto.MetricsEvent;
+import com.android.internal.net.LegacyVpnInfo;
+import com.android.internal.net.VpnConfig;
+import com.android.internal.net.VpnProfile;
+import com.android.internal.util.ArrayUtils;
+import com.android.settingslib.RestrictedLockUtils;
+import com.google.android.collect.Lists;
+import java.util.ArrayList;
+import java.util.Collections;
+import static android.app.AppOpsManager.OP_ACTIVATE_VPN;
+import android.os.SystemProperties;
 
 public class NetworkFragment extends LeanbackPreferenceFragment implements
         ConnectivityListener.Listener, ConnectivityListener.WifiNetworkListener,
-        AccessPoint.AccessPointListener {
-
+        AccessPoint.AccessPointListener, Preference.OnPreferenceClickListener{
     private static final String TAG = "NetworkFragment";
-            
+    private final IConnectivityManager mConnectivityService = IConnectivityManager.Stub
+            .asInterface(ServiceManager.getService(Context.CONNECTIVITY_SERVICE));        
     private static final String KEY_WIFI_ENABLE = "wifi_enable";
     private static final String KEY_WIFI_LIST = "wifi_list";
     private static final String KEY_WIFI_COLLAPSE = "wifi_collapse";
@@ -54,12 +106,12 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
     private static final String KEY_ETHERNET_PROXY = "ethernet_proxy";
     private static final String KEY_ETHERNET_DHCP = "ethernet_dhcp";
     private static final String KEY_ETHERNET_PPPOE = "ethernet_pppoe";
-
+    private static final String KEY_VPN = "avaliable_vpns";
+    private static final String KEY_EDIT_VPN = "edit_vpn";
     private static final int INITIAL_UPDATE_DELAY = 500;
-
+    private final KeyStore mKeyStore = KeyStore.getInstance();
     private ConnectivityListener mConnectivityListener;
     private AccessPointPreference.UserBadgeCache mUserBadgeCache;
-
     private TwoStatePreference mEnableWifiPref;
     private CollapsibleCategory mWifiNetworksCategory;
     private Preference mCollapsePref;
@@ -67,13 +119,16 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
     private Preference mAddPref;
     private TwoStatePreference mAlwaysScan;
     private PreferenceCategory mEthernetCategory;
+    private PreferenceCategory mVpnCategory;
     private Preference mEthernetStatusPref;
     private Preference mEthernetProxyPref;
     private Preference mEthernetDhcpPref;
     private Preference mEthernetPppoePref;
-
+    private Preference mVpnCreatePref;
     private final Handler mHandler = new Handler();
     private long mNoWifiUpdateBeforeMillis;
+    private LegacyVpnInfo mConnectedLegacyVpn;
+    private Map<String, LegacyVpnPreference> mLegacyVpnPreferences = new ArrayMap<>();
     private Runnable mInitialUpdateWifiListRunnable = new Runnable() {
         @Override
         public void run() {
@@ -109,6 +164,7 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
         // There doesn't seem to be an API to listen to everything this could cover, so
         // tickle it here and hope for the best.
         updateConnectivity();
+        updateVPNList();
     }
 
     @Override
@@ -139,6 +195,7 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
         mEthernetPppoePref = findPreference(KEY_ETHERNET_PPPOE);
         mEthernetPppoePref.setIntent(EditPppoeSettingsActivity.createIntent(getContext(),
                 WifiConfiguration.INVALID_NETWORK_ID));
+        mVpnCategory = (PreferenceCategory)findPreference(KEY_VPN);
     }
 
     @Override
@@ -207,8 +264,56 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
                     ? R.string.connected : R.string.not_connected);
             mEthernetStatusPref.setSummary(mConnectivityListener.getEthernetIpAddress());
         }
+        
+        
     }
 
+    private void updateVPNList(){
+    	getActivity().runOnUiThread(new Runnable(){
+    		public void run() {
+    			
+    	    	List<VpnProfile> vpnProfiles = loadVpnProfiles(mKeyStore);
+    	    	String lockdownVpnKey = VpnUtils.getLockdownVpn();
+    	    	final Set<Preference> updates = new ArraySet<>();
+    	    	Map<String, LegacyVpnInfo> connectedLegacyVpns = getConnectedLegacyVpns();
+    	        for (VpnProfile profile : vpnProfiles) {
+    	            LegacyVpnPreference p = findOrCreatePreference(profile);
+    	            if (connectedLegacyVpns.containsKey(profile.key)) {
+    	                p.setState(connectedLegacyVpns.get(profile.key).state);
+    	            } else {
+    	                p.setState(LegacyVpnPreference.STATE_NONE);
+    	            }
+    	            p.setAlwaysOn(lockdownVpnKey != null && lockdownVpnKey.equals(profile.key));
+    	            updates.add(p);
+    	        }
+    	        mVpnCategory.removeAll();
+    	        /*for (int i = mVpnCategory.getPreferenceCount() - 1; i >= 0; i--) {
+                    Preference p = mVpnCategory.getPreference(i);
+                     if (updates.contains(p)) {
+                         updates.remove(p);
+                     } else if(!"vpn_create".equals(p.getKey())){
+                         mVpnCategory.removePreference(p);
+                     }
+                 }*/
+                 // Show any new preferences on the screen
+                 for (Preference pref : updates) {
+                     mVpnCategory.addPreference(pref);
+                 }
+ /*    	        Preference vpnCreatePref = new Preference(getPreferenceManager().getContext());
+     	        vpnCreatePref.setTitle(R.string.create_vpn);
+     	        Intent createVpnIntent = new Intent();
+     	        createVpnIntent.setClassName(getActivity().getPackageName(), VpnCreateActivity.class.getName());
+     	        VpnProfile createProfile = new VpnProfile(Long.toHexString(System.currentTimeMillis()));
+     	        createVpnIntent.putExtra(ConstData.IntentKey.VPN_PROFILE, createProfile);
+     	        createVpnIntent.putExtra(ConstData.IntentKey.VPN_EXIST, false);
+     	        createVpnIntent.putExtra(ConstData.IntentKey.VPN_EDITING, true);
+     	        vpnCreatePref.setIntent(createVpnIntent);
+     	        mVpnCategory.addPreference(vpnCreatePref);*/
+    		};
+    	});
+
+    }
+    
     private void updateWifiList() {
         if (!isAdded()) {
             return;
@@ -287,4 +392,94 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
         ((AccessPointPreference) accessPoint.getTag()).onLevelChanged();
     }
 
+    static List<VpnProfile> loadVpnProfiles(KeyStore keyStore, int... excludeTypes) {
+        final ArrayList<VpnProfile> result = Lists.newArrayList();
+
+        for (String key : keyStore.list(Credentials.VPN)) {
+            final VpnProfile profile = VpnProfile.decode(key, keyStore.get(Credentials.VPN + key));
+            if (profile != null && !ArrayUtils.contains(excludeTypes, profile.type)) {
+                result.add(profile);
+            }
+        }
+        return result;
+    }
+
+    @WorkerThread
+    private Map<String, LegacyVpnInfo> getConnectedLegacyVpns() {
+        try {
+            mConnectedLegacyVpn = mConnectivityService.getLegacyVpnInfo(UserHandle.myUserId());
+            if (mConnectedLegacyVpn != null) {
+                return Collections.singletonMap(mConnectedLegacyVpn.key, mConnectedLegacyVpn);
+            }
+        } catch (RemoteException e) {
+            Log.e(TAG, "Failure updating VPN list with connected legacy VPNs", e);
+        }
+        return Collections.emptyMap();
+    }
+
+    @UiThread
+    private LegacyVpnPreference findOrCreatePreference(VpnProfile profile) {
+        LegacyVpnPreference pref = mLegacyVpnPreferences.get(profile.key);
+        if (pref == null) {
+            pref = new LegacyVpnPreference(getPreferenceManager().getContext());
+            //pref.setOnGearClickListener(mGearListener);
+            pref.setOnPreferenceClickListener(this);
+            mLegacyVpnPreferences.put(profile.key, pref);
+        }
+        // This may change as the profile can update and keep the same key.
+        pref.setProfile(profile);
+        return pref;
+    }
+    
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if (preference instanceof LegacyVpnPreference) {
+            LegacyVpnPreference pref = (LegacyVpnPreference) preference;
+            VpnProfile profile = pref.getProfile();
+            if (mConnectedLegacyVpn != null && profile.key.equals(mConnectedLegacyVpn.key) &&
+                    mConnectedLegacyVpn.state == LegacyVpnInfo.STATE_CONNECTED) {
+                try {
+                    mConnectedLegacyVpn.intent.send();
+                    return true;
+                } catch (Exception e) {
+                    Log.w(TAG, "Starting config intent failed", e);
+                }
+            }
+            Intent prefIntent = new Intent();
+            prefIntent.setClass(getContext(), VpnCreateActivity.class);
+            prefIntent.putExtra(ConstData.IntentKey.VPN_PROFILE, profile);
+            prefIntent.putExtra(ConstData.IntentKey.VPN_EDITING, false);
+            prefIntent.putExtra(ConstData.IntentKey.VPN_EXIST, true);
+            startActivity(prefIntent);
+            //ConfigDialogFragment.show(this, profile, false /* editing */, true /* exists */);
+            return true;
+        } /*else if (preference instanceof AppPreference) {
+            AppPreference pref = (AppPreference) preference;
+            boolean connected = (pref.getState() == AppPreference.STATE_CONNECTED);
+
+            if (!connected) {
+                try {
+                    UserHandle user = UserHandle.of(pref.getUserId());
+                    Context userContext = getActivity().createPackageContextAsUser(
+                            getActivity().getPackageName(), 0  flags , user);
+                    PackageManager pm = userContext.getPackageManager();
+                    Intent appIntent = pm.getLaunchIntentForPackage(pref.getPackageName());
+                    if (appIntent != null) {
+                        userContext.startActivityAsUser(appIntent, user);
+                        return true;
+                    }
+                } catch (PackageManager.NameNotFoundException nnfe) {
+                    Log.w(LOG_TAG, "VPN provider does not exist: " + pref.getPackageName(), nnfe);
+                }
+            }
+
+            // Already connected or no launch intent available - show an info dialog
+            PackageInfo pkgInfo = pref.getPackageInfo();
+            AppDialogFragment.show(this, pkgInfo, pref.getLabel(), false  editing , connected);
+            return true;
+        }else{
+            createVPN();
+        }*/
+        return false;
+    }
 }
