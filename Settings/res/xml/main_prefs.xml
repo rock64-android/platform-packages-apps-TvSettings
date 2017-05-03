@@ -26,6 +26,11 @@
             android:title="@string/connectivity_network"
             android:fragment="com.android.tv.settings.connectivity.NetworkFragment" />
         <Preference
+            android:icon="@drawable/ic_bluetooth"
+            android:key="bluetooth"
+            android:title="@string/bluetooth"
+            android:fragment="com.android.tv.settings.bluetooth.BluetoothFragment" />
+	<Preference
             android:icon="@drawable/ic_input"
             android:key="inputs"
             android:title="@string/system_inputs"
