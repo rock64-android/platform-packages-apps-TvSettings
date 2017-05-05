@@ -138,4 +138,9 @@
         <attr name="radioGroup" format="string" />
     </declare-styleable>
 
+    <!-- For Search -->
+    <declare-styleable name="Preference">
+        <attr name="keywords" format="string" />
+    </declare-styleable>
+
 </resources>
