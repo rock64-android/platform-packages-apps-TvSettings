@@ -1606,7 +1606,7 @@
     <!-- Toast message when there is no network connection to start VPN. [CHAR LIMIT=100] -->
     <string name="vpn_no_network">There is no network connection. Please try again later.</string>
     <!-- Toast message when a certificate is missing. [CHAR LIMIT=100] -->
-    <string name="vpn_missing_cert">A certificate is missing. Please edit the profile.</string>
+    <string name="vpn_missing_cert">A certificatavaliable_bluetoothe is missing. Please edit the profile.</string>
     <string name="vpn_lockdown_config_error">Always-on VPN requires an IP address for both server and DNS.</string>
     <string name="join_two_unrelated_items"><xliff:g id="first_item">%1$s</xliff:g>, <xliff:g id="second_item">%2$s</xliff:g></string>
     <string name="avaliable_vpns">Available vpns</string>
@@ -1614,4 +1614,9 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="bluetooth_rename">Rename</string>
+    <string name="bluetooth_refresh">Refresh</string>
+    <string name="bluetooth_received">Display received files</string>
+    <string name="avaliable_bluetooth">Avaliable bluetooth</string>
 </resources>
