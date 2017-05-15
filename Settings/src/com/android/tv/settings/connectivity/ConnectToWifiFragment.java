@@ -46,7 +46,7 @@ public class ConnectToWifiFragment extends MessageWizardFragment
     }
 
     private static final String TAG = "ConnectToWifiFragment";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public static final int RESULT_SUCCESS = 0;
     public static final int RESULT_UNKNOWN_ERROR= 1;
@@ -56,7 +56,9 @@ public class ConnectToWifiFragment extends MessageWizardFragment
 
     private static final String EXTRA_CONFIGURATION = "configuration";
     private static final int MSG_TIMEOUT = 1;
+    private static final int MSG_POLLING = 2;
     private static final int CONNECTION_TIMEOUT = 15000;
+    private static final int POLLING_INTERVAL = 1000;
 
     public static ConnectToWifiFragment newInstance(String title, boolean showProgressIndicator,
             WifiConfiguration configuration) {
@@ -106,12 +108,24 @@ public class ConnectToWifiFragment extends MessageWizardFragment
 
         @Override
         public void handleMessage(Message msg) {
-            if (DEBUG) Log.d(TAG, "Timeout waiting on supplicant state change");
-
             final ConnectToWifiFragment fragment = mFragmentRef.get();
             if (fragment == null) {
                 return;
             }
+
+            if (msg.what == MSG_POLLING) {
+                if (DEBUG) Log.d(TAG, "MSG_POLLING");
+                if (fragment.isNetworkConnected()) {
+                    if (DEBUG) Log.d(TAG, "we're actually connected");
+                    fragment.mConnected = true;
+                    fragment.notifyListener(RESULT_SUCCESS);
+                } else {
+                    fragment.mHandler.sendEmptyMessageDelayed(MSG_POLLING, POLLING_INTERVAL);
+                }
+                return;
+            }
+
+            if (DEBUG) Log.d(TAG, "Timeout waiting on supplicant state change");
 
             if (fragment.isNetworkConnected()) {
                 if (DEBUG) Log.d(TAG, "Fake timeout; we're actually connected");
@@ -184,6 +198,8 @@ public class ConnectToWifiFragment extends MessageWizardFragment
                     }
                     mHandler.removeMessages(MSG_TIMEOUT);
                     mHandler.sendEmptyMessageDelayed(MSG_TIMEOUT, CONNECTION_TIMEOUT);
+                    mHandler.removeMessages(MSG_POLLING);
+                    mHandler.sendEmptyMessageDelayed(MSG_POLLING, POLLING_INTERVAL);
                 }
             }
         };
@@ -216,6 +232,7 @@ public class ConnectToWifiFragment extends MessageWizardFragment
                 notifyListener(RESULT_UNKNOWN_ERROR);
             } else {
                 mHandler.sendEmptyMessageDelayed(MSG_TIMEOUT, CONNECTION_TIMEOUT);
+                mHandler.sendEmptyMessageDelayed(MSG_POLLING, POLLING_INTERVAL);
             }
         }
     }
@@ -228,6 +245,7 @@ public class ConnectToWifiFragment extends MessageWizardFragment
         getActivity().unregisterReceiver(mReceiver);
         mConnectivityListener.stop();
         mHandler.removeMessages(MSG_TIMEOUT);
+        mHandler.removeMessages(MSG_POLLING);
         super.onDestroy();
     }
 
