@@ -278,8 +278,9 @@ public class ConnectToWifiFragment extends MessageWizardFragment
         }
 
         if (DEBUG) Log.d(TAG, "NetworkInfo: " + netInfo.toString());
-        if (netInfo.isConnected() && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            WifiInfo currentConnection = mWifiManager.getConnectionInfo();
+        //if (netInfo.isConnected() && netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+        WifiInfo currentConnection = mWifiManager.getConnectionInfo();
+        if (currentConnection != null && currentConnection.getIpAddress() != 0) {
             if (DEBUG) {
                 Log.d(TAG, "Connected to "
                         + ((currentConnection == null) ? "nothing" : currentConnection.getSSID()));
