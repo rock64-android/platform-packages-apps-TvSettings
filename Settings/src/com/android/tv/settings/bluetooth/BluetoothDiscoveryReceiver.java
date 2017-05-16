@@ -34,7 +34,7 @@ import com.android.settingslib.bluetooth.BluetoothEventManager;
  * by {@link BluetoothEventManager} to update the UI, if visible.
  */
 public final class BluetoothDiscoveryReceiver extends BroadcastReceiver {
-    private static final String TAG = "BluetoothDiscoveryReceiver";
+    private static final String TAG = "TvSettings_BluetoothDiscoveryReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {

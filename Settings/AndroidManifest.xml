@@ -3,7 +3,7 @@
     package="com.android.tv.settings"
     android:sharedUserId="android.uid.system"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" android:installLocation="preferExternal">
 
     <uses-sdk
         android:minSdkVersion="23" />
@@ -618,6 +618,74 @@
                 <category android:name="android.intent.category.DEFAULT" />
               </intent-filter>
          </activity>
+         <activity android:name="com.android.tv.settings.bluetooth.BluetoothPairingDialog"
+                  android:label="@string/bluetooth_pairing_request"
+                  android:excludeFromRecents="true"
+                  android:windowSoftInputMode="stateVisible|adjustResize"
+                  android:theme="@*android:style/Theme.DeviceDefault.Light.Dialog.Alert">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.device.action.PAIRING_REQUEST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".bluetooth.BluetoothPermissionActivity"
+                  android:label="@string/bluetooth_connection_permission_request"
+                  android:excludeFromRecents="true"
+                  android:permission="android.permission.BLUETOOTH_ADMIN"
+                  android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.Alert">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.device.action.CONNECTION_ACCESS_REQUEST" />
+                <action android:name="android.bluetooth.device.action.CONNECTION_ACCESS_CANCEL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+         <activity android:name=".bluetooth.DevicePickerActivity"
+                android:label="@string/device_picker"
+                android:clearTaskOnLaunch="true">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.devicepicker.action.LAUNCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".bluetooth.RequestPermissionActivity"
+                  android:label="@string/bluetooth_permission_request"
+                  android:excludeFromRecents="true"
+                  android:permission="android.permission.BLUETOOTH"
+                  android:theme="@*android:style/Theme.DeviceDefault.Light.Dialog.Alert">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.adapter.action.REQUEST_DISCOVERABLE" />
+                <action android:name="android.bluetooth.adapter.action.REQUEST_ENABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".bluetooth.RequestPermissionHelperActivity"
+                  android:label="@string/bluetooth_pairing_request"
+                  android:excludeFromRecents="true"
+                  android:permission="android.permission.BLUETOOTH"
+                  android:theme="@*android:style/Theme.DeviceDefault.Light.Dialog.Alert">
+        </activity>
+         <receiver
+            android:name="com.android.tv.settings.bluetooth.BluetoothDiscoveryReceiver">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.adapter.action.DISCOVERY_STARTED" />
+                <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+         <receiver android:name="com.android.tv.settings.bluetooth.BluetoothPairingRequest">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.device.action.PAIRING_REQUEST" />
+                <action android:name="android.bluetooth.device.action.PAIRING_CANCEL" />
+                <action android:name="android.bluetooth.device.action.BOND_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".bluetooth.BluetoothPermissionRequest"
+                  android:permission="android.permission.BLUETOOTH_ADMIN">
+            <intent-filter android:priority="10">
+                <action android:name="android.bluetooth.device.action.CONNECTION_ACCESS_REQUEST" />
+                <action android:name="android.bluetooth.device.action.CONNECTION_ACCESS_CANCEL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -32,6 +32,7 @@ import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.ImageView;
 
 import com.android.tv.settings.R;
@@ -50,7 +51,7 @@ import static android.os.UserManager.DISALLOW_CONFIG_BLUETOOTH;
  * Bluetooth device in the Bluetooth Settings screen.
  */
 public final class BluetoothDevicePreference extends Preference implements
-        CachedBluetoothDevice.Callback, OnClickListener {
+        CachedBluetoothDevice.Callback, OnClickListener, OnLongClickListener {
     private static final String TAG = "BluetoothDevicePreference";
 
     private static int sDimAlpha = Integer.MIN_VALUE;
@@ -161,9 +162,13 @@ public final class BluetoothDevicePreference extends Preference implements
             ImageView deviceDetails = (ImageView) view.findViewById(R.id.deviceDetails);
 
             if (deviceDetails != null) {
-                deviceDetails.setOnClickListener(this);
-                deviceDetails.setTag(mCachedDevice);
+            	deviceDetails.setVisibility(View.GONE);
+                //deviceDetails.setOnClickListener(this);
+                //deviceDetails.setTag(mCachedDevice);
             }
+            
+            view.itemView.setOnLongClickListener(this);
+            view.itemView.setTag(mCachedDevice);
         }
         final ImageView imageView = (ImageView) view.findViewById(android.R.id.icon);
         if (imageView != null) {
@@ -178,6 +183,15 @@ public final class BluetoothDevicePreference extends Preference implements
             mOnSettingsClickListener.onClick(v);
         }
     }
+    
+	@Override
+	public boolean onLongClick(View v) {
+		Log.i(TAG, "onLongClick");
+		 if (mOnSettingsClickListener != null) {
+	            mOnSettingsClickListener.onClick(v);
+	        }
+		 return true;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -295,4 +309,5 @@ public final class BluetoothDevicePreference extends Preference implements
         }
         return new Pair<Integer, String>(R.drawable.ic_settings_bluetooth, BLUETOOTH);
     }
+
 }

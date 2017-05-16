@@ -1831,4 +1831,15 @@
     <string name="hotpot_setting_title">Hotpot Setup</string>
     <string name="wifi_in_airplane_mode">In Airplane mode</string>
     <string name="bluetooth_paired">Paired devices</string>
+    <string name="forget">Forget</string>
+    <string name="okay">OK</string>
+    <string name="yes">"Yes"</string>
+    <!-- Strings for Dialog no button -->
+    <string name="no">"No"</string>
+    <string name="create">Create</string>
+    <!-- Strings for Dialog allow button -->
+    <string name="allow">Allow</string>
+    <!-- Strings for Dialog deny button -->
+    <string name="deny">Deny</string>
+    <string name="progress_scanning">Searching</string>
 </resources>
