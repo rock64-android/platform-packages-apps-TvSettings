@@ -37,6 +37,7 @@ import com.android.settingslib.wifi.AccessPoint;
 import com.android.settingslib.wifi.WifiTracker;
 
 import java.util.List;
+import android.util.Log;
 
 /**
  * Listens for changes to the current connectivity status.
@@ -73,9 +74,18 @@ public class ConnectivityListener implements WifiTracker.WifiListener {
     private final EthernetManager.Listener mEthernetListener = new EthernetManager.Listener() {
         @Override
         public void onAvailabilityChanged(boolean isAvailable) {
+            Log.d(TAG,"mEthernetListener");
             mListener.onConnectivityChange();
         }
     };
+    private final BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int netType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, -1);
+            if (netType == ConnectivityManager.TYPE_ETHERNET)
+                mListener.onConnectivityChange();
+        }
+    };   
 
     public static class ConnectivityStatus {
         public static final int NETWORK_NONE = 1;
@@ -125,6 +135,8 @@ public class ConnectivityListener implements WifiTracker.WifiListener {
             mContext.registerReceiver(mWifiEnabledReceiver, new IntentFilter(
                     WifiManager.WIFI_STATE_CHANGED_ACTION));
             mEthernetManager.addListener(mEthernetListener);
+            mContext.registerReceiver(mConnectivityReceiver, new IntentFilter(
+                    ConnectivityManager.CONNECTIVITY_ACTION));
         }
     }
 
@@ -139,6 +151,7 @@ public class ConnectivityListener implements WifiTracker.WifiListener {
             mContext.unregisterReceiver(mWifiEnabledReceiver);
             mWifiListener = null;
             mEthernetManager.removeListener(mEthernetListener);
+            mContext.unregisterReceiver(mConnectivityReceiver);
         }
     }
 
