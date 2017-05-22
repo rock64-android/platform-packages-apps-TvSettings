@@ -52,7 +52,7 @@ public final class DevicePickerFragment extends BaseDevicePickerFragment {
     @Override
     void addPreferencesForActivity() {
         addPreferencesFromResource(R.xml.device_picker);
-
+        getPreferenceScreen().setTitle(R.string.bluetooth_devices);
         Intent intent = getActivity().getIntent();
         mNeedAuth = intent.getBooleanExtra(BluetoothDevicePicker.EXTRA_NEED_AUTH, false);
         setFilter(intent.getIntExtra(BluetoothDevicePicker.EXTRA_FILTER_TYPE,

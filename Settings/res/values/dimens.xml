@@ -15,7 +15,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <dimen name="icon_padding">12dp</dimen>
+	<dimen name="fab_press_translation_z">9dp</dimen>
+	<dimen name="icon_padding">12dp</dimen>
 
     <dimen name="browse_item_height">168dp</dimen>
     <dimen name="browse_item_width">168dp</dimen>

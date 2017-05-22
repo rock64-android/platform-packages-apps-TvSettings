@@ -15,8 +15,54 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
+	<string name="no_button">Cancel</string>
+	<string name="ok_button">Save</string>
+
+	<string name="wifi_ssid">Network name</string>
+	<string name="wifi_ssid_hint">Enter the SSID</string>
+	<string name="wifi_security">Security</string>
+	<string name="wifi_password">Password</string>
+	<string name="wifi_show_password">Show password</string>
+	<string name="credentials_password_too_short">The password must have at least 8 characters.</string>
+	<string name="wifi_ap_band_config">Select AP Band</string>
+	<string name="wifi_tether_configure_subtext"><xliff:g id="network_ssid">%1$s</xliff:g> <xliff:g id="network_security">%2$s</xliff:g> portable Wi\u2011Fi hotspot</string>
+	<string name="bluetooth_turning_on">"Turning Bluetooth on\u2026"</string>
+	<string name="positive_button">OK</string>
+	<string name="nagetive_button">NO</string>
+	<string name="usb_tethering_active_subtext">Tethered</string>
+	<string name="usb_tethering_available_subtext">USB connected, check to tether</string>
+	<string name="usb_tethering_errored_subtext">USB tethering error</string>
+	<string name="usb_tethering_storage_active_subtext">Can\u2019t tether when USB storage is in use</string>
+	<string name="usb_tethering_unavailable_subtext">USB not connected</string>
+	<string name="bluetooth_turning_off">"Turning Bluetooth off\u2026"</string>
+	<string name="bluetooth_tethering_off_subtext" product="tablet">Not sharing this tablet\u2019s Internet connection</string>
+    <!-- Bluetooth tethering off subtext - shown when Bluetooth Tethering is turned off [CHAR LIMIT=50]-->
+    <string name="bluetooth_tethering_off_subtext" product="default">Not sharing this phone\u2019s Internet connection</string>
+	<string name="bluetooth_tethering_available_subtext" product="tablet">Sharing this tablet\u2019s Internet connection</string>
+    <!-- Bluetooth available subtext - shown when Bluetooth tethering is turned on but it is not currently tethered to any devices [CHAR LIMIT=50]-->
+    <string name="bluetooth_tethering_available_subtext" product="default">Sharing this phone\u2019s Internet connection</string>
+	<string name="bluetooth_tethering_errored_subtext">Not tethered</string>
+	<string name="bluetooth_tethering_devices_connected_subtext" product="tablet">Sharing this tablet\u2019s Internet connection to <xliff:g id="connectedDeviceCount">%1$d</xliff:g> devices</string>
+    <string name="bluetooth_tethering_devices_connected_subtext" product="default">Sharing this phone\u2019s Internet connection to <xliff:g id="connectedDeviceCount">%1$d</xliff:g> devices</string>
+	<string name="bluetooth_tethering_device_connected_subtext" product="tablet">Sharing this tablet\u2019s Internet connection to 1 device</string>
+    <string name="bluetooth_tethering_device_connected_subtext" product="default">Sharing this phone\u2019s Internet connection to 1 device</string>
+
+	<string name="wifi_tether_enabled_subtext">Portable hotspot <xliff:g id="network_ssid">%1$s</xliff:g> active</string>
+	<string name="wifi_error">Error</string>
+	<string name="wifi_tether_starting">Turning hotspot on\u2026</string>
+	<string name="wifi_tether_stopping">Turning off hotspot\u2026</string>
+	<string name="wifi_sap_no_channel_error">5 GHz band not available in this country</string>
+
+	<string name="wifi_ap_choose_2G">2.4 GHz Band</string>
+	<string name="wifi_ap_choose_5G">5 GHz Band</string>
+
+	<string name="wifi_save">Save</string>
+	<string name="wifi_cancel">Cancel</string>
+
     <!-- Main app title [CHAR LIMIT=40] -->
     <string name="settings_app_name">Settings</string>
+
+    <string name="hotpot_name">HotPot</string>
 
     <!-- Leanback Launcher App Title for main Settings app [CHAR LIMIT=40] -->
     <string name="launcher_settings_app_name">Settings</string>
@@ -26,6 +72,10 @@
 
     <!-- Leanback Launcher App Title for Restricted Profile app [CHAR LIMIT=40] -->
     <string name="launcher_restricted_profile_app_name">Restricted Profile</string>
+	<string name="usb_tethering_button_text">USB tethering</string>
+	<string name="wifi_tether_checkbox_text">Portable Wi\u2011Fi hotspot</string>
+	<string name="wifi_tether_configure_ap_text">Set up Wi\u2011Fi hotspot</string>
+	<string name="bluetooth_tether_checkbox_text">Bluetooth tethering</string>
 
     <!-- Top level headers -->
     <skip />
@@ -1655,8 +1705,6 @@
     <string name="bluetooth_broadcasting_explaination" product="default">When this feature is turned on, your phone can communicate with other devices nearby.\n\nBroadcasting uses low-power Bluetooth signals.</string>
     <string name="bluetooth_ask_enablement_and_discovery">An app wants to turn on Bluetooth and make your tablet visible to other devices for <xliff:g id="timeout">%1$d</xliff:g> seconds.</string>
     <string name="bluetooth_ask_enablement_and_lasting_discovery" product="default">An app wants to turn on Bluetooth and make your phone visible to other devices. You can change this later in Bluetooth settings.</string>
-    <string name="bluetooth_turning_on">"Turning Bluetooth on\u2026"</string>
-    <string name="bluetooth_turning_off">"Turning Bluetooth off\u2026"</string>
     <string name="bluetooth_auto_connect">Auto-connect</string>
     <string name="bluetooth_connection_permission_request">"Bluetooth connection request"</string>
     <string name="bluetooth_connection_notif_message">"Tap to connect to \u0022<xliff:g id="device_name">%1$s</xliff:g>\u0022."</string>
@@ -1809,7 +1857,6 @@
     <string name="reset_network_desc">This will reset all network settings, including:\n\n<li>Wi\u2011Fi</li>\n<li>Cellular data</li>\n<li>Bluetooth</li>"</string>
     <string name="tether_settings_title_bluetooth">Bluetooth tethering</string>
     <string name="tether_settings_title_usb_bluetooth">Tethering</string>
-    <string name="bluetooth_tether_checkbox_text">Bluetooth tethering</string>
     <string name="bluetooth_tethering_available_subtext" product="tablet">Sharing this tablet\u2019s Internet connection</string>
     <string name="bluetooth_tethering_available_subtext" product="default">Sharing this phone\u2019s Internet connection</string>
     <string name="bluetooth_tethering_device_connected_subtext" product="tablet">Sharing this tablet\u2019s Internet connection to 1 device</string>
@@ -1819,7 +1866,6 @@
     <string name="bluetooth_tethering_off_subtext_config">Sharing this <xliff:g id="device_name">%1$d</xliff:g>\u2019s Internet connection</string>
     <string name="bluetooth_tethering_off_subtext" product="tablet">Not sharing this tablet\u2019s Internet connection</string>
     <string name="bluetooth_tethering_off_subtext" product="default">Not sharing this phone\u2019s Internet connection</string>
-    <string name="bluetooth_tethering_errored_subtext">Not tethered</string>
     <string name="bluetooth_tethering_overflow_error">Can\u2019t tether to more than <xliff:g id="maxConnection">%1$d</xliff:g> devices.</string>
     <string name="bluetooth_untether_blank"><xliff:g id="device_name">%1$s</xliff:g> will be untethered.</string>
     <string name="location_mode_high_accuracy_description">Use GPS, Wi\u2011Fi, Bluetooth, or cellular networks to determine location </string>

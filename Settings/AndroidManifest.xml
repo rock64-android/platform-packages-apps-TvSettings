@@ -69,6 +69,24 @@
             </intent-filter>
         </activity>
 
+		<activity
+            android:name=".connectivity.HotPotActivity"
+			>
+        </activity>
+
+		<activity
+            android:name=".connectivity.WifiApDialog"
+			>
+        </activity>
+
+		<activity
+            android:name=".connectivity.HotpotDialogActivity"
+			>
+			<intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <!-- WifiSetupActivity may be (usually is) started from setup so theme is
              determined at runtime -->
         <activity
