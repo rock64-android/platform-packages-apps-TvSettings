@@ -57,8 +57,8 @@ public class ProgressCategory extends ProgressCategoryBase {
     @Override
     public void onBindViewHolder(PreferenceViewHolder view) {
         super.onBindViewHolder(view);
+        view.itemView.setFocusable(false);
         final View progressBar = view.findViewById(R.id.scanning_progress);
-
         boolean noDeviceFound = (getPreferenceCount() == 0 ||
                 (getPreferenceCount() == 1 && getPreference(0) == mNoDeviceFoundPreference));
         progressBar.setVisibility(mProgress ? View.VISIBLE : View.GONE);

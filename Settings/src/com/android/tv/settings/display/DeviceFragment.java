@@ -85,14 +85,13 @@ Preference.OnPreferenceClickListener{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initData();
-        initView();
         initEvent();
-        //updateResolutionValue();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        rebuildView();
         updateResolutionValue();
     }
 
@@ -119,7 +118,9 @@ Preference.OnPreferenceClickListener{
 
     }
 
-    protected void initView(){
+    protected void rebuildView(){
+    	if(mDisplayInfo == null)
+    		return;
         mResolutionPreference.setEntries(mDisplayInfo.getModes());
         mResolutionPreference.setEntryValues(mDisplayInfo.getModes());
         mTextTitle.setText(mDisplayInfo.getDescription());
@@ -135,6 +136,8 @@ Preference.OnPreferenceClickListener{
      * 还原分辨率值
      */
     public void updateResolutionValue(){
+    	if(mDisplayInfo == null)
+    		return;
         String resolutionValue = null;
         if(mStrPlatform.contains("3399")){
             resolutionValue = DrmDisplaySetting.getCurDisplayMode(mDisplayInfo);

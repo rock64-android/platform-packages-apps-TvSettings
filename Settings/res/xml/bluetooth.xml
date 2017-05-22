@@ -25,13 +25,16 @@
 
     <PreferenceCategory
         android:key="bluetooth_paried"
-        android:title="@string/bluetooth_paired" />
-    <PreferenceCategory
+        android:title="@string/bluetooth_paired" 
+        android:order="1"/>
+    <com.android.tv.settings.bluetooth.BluetoothProgressCategory
         android:key="bluetooth_avaliable"
-        android:title="@string/avaliable_bluetooth" />
+        android:title="@string/avaliable_bluetooth" 
+        android:order="2"/>
     <PreferenceCategory
         android:key="bluetooth_other"
-        android:title="@string/wifi_setting_header_other_options" >
+        android:title="@string/wifi_setting_header_other_options" 
+        android:order="3">
         <Preference
             android:key="bluetooth_rename"
             android:title="@string/bluetooth_rename" >
