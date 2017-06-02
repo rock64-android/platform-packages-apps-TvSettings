@@ -42,6 +42,7 @@ Preference.OnPreferenceClickListener{
     protected static final String TAG = "DeviceFragment";
     public static final String KEY_RESOLUTION = "resolution";
     public static final String KEY_ZOOM = "zoom";
+    public static final String KEY_ADVANCED_SETTINGS = "advanced_settings";
     protected PreferenceScreen mPreferenceScreen;
     /**
      * 分辨率设置
@@ -51,6 +52,10 @@ Preference.OnPreferenceClickListener{
      * 缩放设置
      */
     protected Preference mZoomPreference;
+    /**
+     * 高级设置
+     */
+    protected Preference mAdvancedSettingsPreference;
     /**
      * 当前显示设备对应的信息
      */
@@ -106,16 +111,18 @@ Preference.OnPreferenceClickListener{
         mStrPlatform = SystemProperties.get("ro.board.platform");
         mDisplayManager = (DisplayManager)getActivity().getSystemService(Context.DISPLAY_SERVICE);
         mPreferenceScreen = getPreferenceScreen();
+        mAdvancedSettingsPreference = findPreference(KEY_ADVANCED_SETTINGS);
+        mResolutionPreference = (ListPreference)findPreference(KEY_RESOLUTION);
+        mZoomPreference = findPreference(KEY_ZOOM);
+        mTextTitle = (TextView)getActivity().findViewById(android.support.v7.preference.R.id.decor_title);
         if (mStrPlatform.contains("3399")) {
             mDisplayInfo = getDisplayInfo();
         } else {
             Intent intent = getActivity().getIntent();
             mDisplayInfo = (DisplayInfo) intent.getExtras().getSerializable(ConstData.IntentKey.DISPLAY_INFO);
         }
-        mResolutionPreference = (ListPreference)findPreference(KEY_RESOLUTION);
-        mZoomPreference = findPreference(KEY_ZOOM);
-        mTextTitle = (TextView)getActivity().findViewById(android.support.v7.preference.R.id.decor_title);
-
+        if(!mStrPlatform.contains("3328"))
+        	mPreferenceScreen.removePreference(mAdvancedSettingsPreference);
     }
 
     protected void rebuildView(){
@@ -130,6 +137,7 @@ Preference.OnPreferenceClickListener{
     protected void initEvent(){
         mResolutionPreference.setOnPreferenceChangeListener(this);
         mZoomPreference.setOnPreferenceClickListener(this);
+        mAdvancedSettingsPreference.setOnPreferenceClickListener(this);
     }
 
     /**
@@ -194,6 +202,9 @@ Preference.OnPreferenceClickListener{
             startActivity(screenScaleIntent);
         } else if (preference == mResolutionPreference) {
             //updateResolutionValue();
+        }else if(preference == mAdvancedSettingsPreference){
+        	Intent advancedIntent = new Intent(getActivity(), AdvancedDisplaySettingsActivity.class);
+            startActivity(advancedIntent);
         }
         return true;
     }

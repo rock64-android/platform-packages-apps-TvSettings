@@ -954,4 +954,14 @@
     <!-- Strings for Dialog deny button -->
     <string name="deny">拒绝</string>
     <string name="progress_scanning">搜索中</string>
+    <string name="advanced_settings">高级设置</string>
+    <string name="bcsh">BCSH</string>
+    <string name="hdr">HDR</string>
+    <string name="brightness">亮度</string>
+    <string name="current">当前数值:</string>
+    <string name="contrast">对比度</string>
+    <string name="saturation">饱和度</string>
+    <string name="tone">色调</string>
+    <string name="max_brightness">最大亮度</string>
+    <string name="min_brightness">最小亮度</string>
 </resources>

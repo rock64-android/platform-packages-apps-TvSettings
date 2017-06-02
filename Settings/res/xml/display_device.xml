@@ -27,4 +27,7 @@
         android:key="zoom"
         android:title="@string/zoom" />
 
+    <Preference
+        android:key="advanced_settings"
+        android:title="@string/advanced_settings" />
 </PreferenceScreen>

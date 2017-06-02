@@ -46,7 +46,7 @@ LOCAL_AAPT_FLAGS := --auto-add-overlay \
 LOCAL_SRC_FILES := \
     $(call all-java-files-under, src) \
     $(call all-Iaidl-files-under, src)
-
+LOCAL_JNI_SHARED_LIBRARIES := libtvsettings-jni
 include frameworks/base/packages/SettingsLib/common.mk
-
 include $(BUILD_PACKAGE)
+include $(LOCAL_PATH)/jni/Android.mk

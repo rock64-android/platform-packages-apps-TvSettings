@@ -1888,4 +1888,14 @@
     <!-- Strings for Dialog deny button -->
     <string name="deny">Deny</string>
     <string name="progress_scanning">Searching</string>
+    <string name="advanced_settings">Advanced settings</string>
+    <string name="bcsh">BCSH</string>
+    <string name="hdr">HDR</string>
+    <string name="brightness">Brightness</string>
+    <string name="current">Current value:</string>
+    <string name="contrast">Contrast</string>
+    <string name="saturation">Saturation</string>
+    <string name="tone">Tone</string>
+    <string name="max_brightness">Max brightness</string>
+    <string name="min_brightness">Min brightness</string>
 </resources>
