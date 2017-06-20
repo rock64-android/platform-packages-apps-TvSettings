@@ -84,13 +84,13 @@ Preference.OnPreferenceClickListener{
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.display_device, null);
+        initData();
+        initEvent();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initData();
-        initEvent();
     }
 
     @Override
