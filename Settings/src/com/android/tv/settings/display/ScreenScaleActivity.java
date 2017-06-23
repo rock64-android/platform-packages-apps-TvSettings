@@ -69,6 +69,9 @@ public class ScreenScaleActivity extends Activity
      * 标识平台
      */
     private String mPlatform;
+
+    private boolean mIsUseDisplayd;
+
     /**
      * 当前设备的显示信息
      */
@@ -323,7 +326,7 @@ public class ScreenScaleActivity extends Activity
 			Log.d("ScreenSettingActivity",msg);
 	}
 	private void rightClick(boolean isClick){
-        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+        if(mIsUseDisplayd && mDisplayOutputManager != null) {
             int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).right + 1;
             if (scalevalue > MAX_SCALE){
                 scalevalue = MAX_SCALE;
@@ -335,7 +338,7 @@ public class ScreenScaleActivity extends Activity
                     mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
                 }
             }
-        }else if(mPlatform.contains("3399")){
+        }else if(!mIsUseDisplayd){
             mLeftScale += 1;
             if(mLeftScale > MAX_SCALE)
                 mLeftScale = MAX_SCALE;
@@ -348,7 +351,7 @@ public class ScreenScaleActivity extends Activity
         }
 	}
 	private void leftClick(boolean isClick){
-        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+        if(mIsUseDisplayd && mDisplayOutputManager != null) {
             int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).left - 1;
             if (scalevalue < MIN_SCALE){
                 scalevalue = MIN_SCALE;
@@ -360,7 +363,7 @@ public class ScreenScaleActivity extends Activity
                     mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_X, scalevalue);
                 }
             }
-        }else if(mPlatform.contains("3399")){
+        }else if(!mIsUseDisplayd){
             mLeftScale -= 1;
             if(mLeftScale < MIN_SCALE)
                 mLeftScale = MIN_SCALE;
@@ -374,7 +377,7 @@ public class ScreenScaleActivity extends Activity
 	}
 	private void upClick(boolean isClick){
         // add code here
-        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+        if(mIsUseDisplayd && mDisplayOutputManager != null) {
             int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).top - 1;
             if (scalevalue < MIN_SCALE){
                 scalevalue = MIN_SCALE;
@@ -386,7 +389,7 @@ public class ScreenScaleActivity extends Activity
                     mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
                 }
             }
-        }else if(mPlatform.contains("3399")){
+        }else if(!mIsUseDisplayd){
             mBottomScale -= 1;
             if(mBottomScale < MIN_SCALE)
                 mBottomScale = MIN_SCALE;
@@ -399,7 +402,7 @@ public class ScreenScaleActivity extends Activity
         }
 	}
 	private void downClick(boolean isClick){
-        if(!mPlatform.contains("3399") && mDisplayOutputManager != null) {
+        if(mIsUseDisplayd && mDisplayOutputManager != null) {
             int scalevalue = mDisplayOutputManager.getOverScan(mDisplayOutputManager.MAIN_DISPLAY).bottom + 1;
             if (scalevalue > MAX_SCALE){
                 scalevalue = MAX_SCALE;
@@ -411,7 +414,7 @@ public class ScreenScaleActivity extends Activity
                     mDisplayOutputManager.setOverScan(mDisplayOutputManager.AUX_DISPLAY, mDisplayOutputManager.DISPLAY_OVERSCAN_Y, scalevalue);
                 }
             }
-        }else if(mPlatform.contains("3399")){
+        }else if(!mIsUseDisplayd){
             mBottomScale += 1;
             if(mBottomScale > MAX_SCALE)
                 mBottomScale = MAX_SCALE;
@@ -428,9 +431,10 @@ public class ScreenScaleActivity extends Activity
 	 */
 	public void initData(){
 	   mPlatform = getIntent().getStringExtra(ConstData.IntentKey.PLATFORM);
+	   mIsUseDisplayd = SystemProperties.getBoolean("ro.rk.displayd.enable", true);
 	   mDisplayInfo = (DisplayInfo)getIntent().getSerializableExtra(ConstData.IntentKey.DISPLAY_INFO);
 	   String overScan;
-	   if(mPlatform.contains("3399")){
+	   if(!mIsUseDisplayd){
 	      if(mDisplayInfo.getDisplayId() == 0){
 	          overScan = SystemProperties.get(PROPERTY_OVERSCAN_MAIN);
 	      }else{

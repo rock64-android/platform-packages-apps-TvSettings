@@ -44,6 +44,8 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
 	public static final String HDMI_PLUG_ACTION = "android.intent.action.HDMI_PLUGGED";
 	private PreferenceScreen mPreferenceScreen;
 	private static String mStrPlatform;
+	private static boolean mIsUseDisplayd;
+
 	/**
 	 * rk_fb输出相关
 	 */
@@ -80,8 +82,8 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        mStrPlatform = SystemProperties.get("ro.board.platform");
-        if (mStrPlatform.contains("3399")) {
+        mIsUseDisplayd = SystemProperties.getBoolean("ro.rk.displayd.enable", true);
+        if (!mIsUseDisplayd) {
             setPreferencesFromResource(R.xml.display_drm, null);
         } else {
             setPreferencesFromResource(R.xml.display, null);
@@ -191,9 +193,9 @@ public class DisplayFragment extends LeanbackPreferenceFragment{
     		Log.i(TAG, "new DisplayOutputManger exception:" + e);
     	}
 
-    	String platform = SystemProperties.get("ro.board.platform");
+        mIsUseDisplayd = SystemProperties.getBoolean("ro.rk.displayd.enable", true);
     	Display[] displays = mDisplayManager.getDisplays();
-    	if(platform.contains("3399")){
+		if(!mIsUseDisplayd){
 			displayInfos.addAll(DrmDisplaySetting.getDisplayInfoList());
     	}else{
     		//使用rk_fb方式获取显示列表

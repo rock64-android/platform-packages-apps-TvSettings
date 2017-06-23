@@ -68,6 +68,7 @@ Preference.OnPreferenceClickListener{
      * 标识平台
      */
     protected String mStrPlatform;
+    protected boolean mIsUseDisplayd;
     /**
      * 显示管理
      */
@@ -109,13 +110,14 @@ Preference.OnPreferenceClickListener{
 
     protected void initData(){
         mStrPlatform = SystemProperties.get("ro.board.platform");
+        mIsUseDisplayd = SystemProperties.getBoolean("ro.rk.displayd.enable", true);
         mDisplayManager = (DisplayManager)getActivity().getSystemService(Context.DISPLAY_SERVICE);
         mPreferenceScreen = getPreferenceScreen();
         mAdvancedSettingsPreference = findPreference(KEY_ADVANCED_SETTINGS);
         mResolutionPreference = (ListPreference)findPreference(KEY_RESOLUTION);
         mZoomPreference = findPreference(KEY_ZOOM);
         mTextTitle = (TextView)getActivity().findViewById(android.support.v7.preference.R.id.decor_title);
-        if (mStrPlatform.contains("3399")) {
+        if (!mIsUseDisplayd) {
             mDisplayInfo = getDisplayInfo();
         } else {
             Intent intent = getActivity().getIntent();
@@ -147,9 +149,9 @@ Preference.OnPreferenceClickListener{
     	if(mDisplayInfo == null)
     		return;
         String resolutionValue = null;
-        if(mStrPlatform.contains("3399")){
+        if(!mIsUseDisplayd){
             resolutionValue = DrmDisplaySetting.getCurDisplayMode(mDisplayInfo);
-            Log.i(TAG, "3399 resolutionValue:" + resolutionValue);
+            Log.i(TAG, "drm resolutionValue:" + resolutionValue);
             if(resolutionValue != null)
                 mResolutionPreference.setValue(resolutionValue);
         }else{
@@ -171,7 +173,7 @@ Preference.OnPreferenceClickListener{
     public boolean onPreferenceChange(Preference preference, Object obj) {
         Log.i(TAG, "onPreferenceChange:" + obj);
         if(preference == mResolutionPreference){
-            if(mStrPlatform.contains("3399")){
+            if(!mIsUseDisplayd){
                 int index = mResolutionPreference.findIndexOfValue((String)obj);
                 DrmDisplaySetting.setDisplayModeTemp(mDisplayInfo, index);
                 showConfirmSetModeDialog();
@@ -217,7 +219,7 @@ Preference.OnPreferenceClickListener{
             public void onDismiss(boolean isok) {
                 Log.i(TAG, "showConfirmSetModeDialog->onDismiss->isok:" + isok);
                 Log.i(TAG, "showConfirmSetModeDialog->onDismiss->mOldResolution:" + mOldResolution);
-                if(mStrPlatform.contains("3399"))
+                if(!mIsUseDisplayd)
                     updateResolutionValue();
                 else{
                     DisplayOutputManager displayOutputManager = null;
