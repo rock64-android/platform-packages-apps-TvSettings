@@ -41,7 +41,7 @@ import android.net.IConnectivityManager;
 import android.os.ServiceManager;
 import android.util.ArraySet;
 import java.util.Map;
-
+import android.os.Handler;
 import com.android.tv.settings.data.ConstData;
 import com.android.tv.settings.vpn.*;
 import android.annotation.UiThread;
@@ -90,7 +90,7 @@ import android.os.SystemProperties;
 
 public class NetworkFragment extends LeanbackPreferenceFragment implements
         ConnectivityListener.Listener, ConnectivityListener.WifiNetworkListener,
-        AccessPoint.AccessPointListener, Preference.OnPreferenceClickListener{
+        AccessPoint.AccessPointListener, Preference.OnPreferenceClickListener, Handler.Callback{
     private static final String TAG = "NetworkFragment";
     private final IConnectivityManager mConnectivityService = IConnectivityManager.Stub
             .asInterface(ServiceManager.getService(Context.CONNECTIVITY_SERVICE));        
@@ -128,6 +128,9 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
     private final Handler mHandler = new Handler();
     private long mNoWifiUpdateBeforeMillis;
     private LegacyVpnInfo mConnectedLegacyVpn;
+    private Handler mUpdater;
+    private static final int RESCAN_MESSAGE = 0;
+    private static final int RESCAN_INTERVAL_MS = 1000;
     private Map<String, LegacyVpnPreference> mLegacyVpnPreferences = new ArrayMap<>();
     private Runnable mInitialUpdateWifiListRunnable = new Runnable() {
         @Override
@@ -164,7 +167,18 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
         // There doesn't seem to be an API to listen to everything this could cover, so
         // tickle it here and hope for the best.
         updateConnectivity();
-        updateVPNList();
+        //updateVPNList();
+        if (mUpdater == null) {
+            mUpdater = new Handler(this);
+        }
+        mUpdater.sendEmptyMessage(RESCAN_MESSAGE);
+    }
+
+    public void onPause(){
+        super.onPause();
+        if (mUpdater != null) {
+            mUpdater.removeCallbacksAndMessages(null);
+        }
     }
 
     @Override
@@ -286,15 +300,15 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
     	            p.setAlwaysOn(lockdownVpnKey != null && lockdownVpnKey.equals(profile.key));
     	            updates.add(p);
     	        }
-    	        mVpnCategory.removeAll();
-    	        /*for (int i = mVpnCategory.getPreferenceCount() - 1; i >= 0; i--) {
+                mLegacyVpnPreferences.values().retainAll(updates);
+                for (int i = mVpnCategory.getPreferenceCount() - 1; i >= 0; i--) {
                     Preference p = mVpnCategory.getPreference(i);
                      if (updates.contains(p)) {
                          updates.remove(p);
-                     } else if(!"vpn_create".equals(p.getKey())){
+                     } /*else if(!"vpn_create".equals(p.getKey())){
                          mVpnCategory.removePreference(p);
-                     }
-                 }*/
+                     }*/
+                 }
                  // Show any new preferences on the screen
                  for (Preference pref : updates) {
                      mVpnCategory.addPreference(pref);
@@ -481,5 +495,13 @@ public class NetworkFragment extends LeanbackPreferenceFragment implements
             createVPN();
         }*/
         return false;
+    }
+
+    @Override
+    public boolean handleMessage(Message message) {
+        mUpdater.removeMessages(RESCAN_MESSAGE);
+        updateVPNList();
+        mUpdater.sendEmptyMessageDelayed(RESCAN_MESSAGE, RESCAN_INTERVAL_MS);
+        return true;
     }
 }
