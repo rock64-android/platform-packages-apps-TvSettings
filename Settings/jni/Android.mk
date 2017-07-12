@@ -12,7 +12,8 @@ LOCAL_DEFAULT_CPP_EXTENSION := cpp
 LOCAL_SRC_FILES := \
   native.cpp \
   TVInfo.h \
-  TVInfo.cpp
+  TVInfo.cpp \
+  Vop.h
  
 LOCAL_SHARED_LIBRARIES := \
 	libutils liblog

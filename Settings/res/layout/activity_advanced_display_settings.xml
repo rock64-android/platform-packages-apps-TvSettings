@@ -16,8 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/bcsh"
-            android:textSize="20sp" 
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,15 +28,15 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/brightness" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/brightness"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/brightness"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:max="63"/>
+                android:max="63" />
 
             <TextView
                 android:id="@+id/text_bcsh_brightness_num"
@@ -52,10 +52,10 @@
             android:paddingTop="10dp" >
 
             <TextView
-               android:layout_width="100dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/contrast" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/contrast"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/contrast"
@@ -68,8 +68,8 @@
             <TextView
                 android:id="@+id/text_bcsh_contrast_num"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -81,8 +81,8 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/saturation" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/saturation"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/saturation"
@@ -95,8 +95,8 @@
             <TextView
                 android:id="@+id/text_bcsh_saturation_num"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -108,8 +108,8 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/tone" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/tone"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/tone"
@@ -122,8 +122,8 @@
             <TextView
                 android:id="@+id/text_bcsh_tone_num"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
 
@@ -134,14 +134,15 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/layout_background"
         android:orientation="vertical"
-        android:padding="10dp" >
+        android:padding="10dp"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/hdr"
-            android:textSize="20sp" 
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
 
         <!-- 最大亮度 -->
 
@@ -154,8 +155,8 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/max_brightness" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/max_brightness"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/seekbar_max_brightness"
@@ -167,8 +168,8 @@
             <TextView
                 android:id="@+id/text_progress_max_brightness"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <!-- 最小亮度 -->
@@ -195,8 +196,8 @@
             <TextView
                 android:id="@+id/text_progress_min_progress"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <!-- 亮度 -->
@@ -210,8 +211,8 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/brightness" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/brightness"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/seekbar_brightness"
@@ -223,8 +224,8 @@
             <TextView
                 android:id="@+id/text_brightness_num"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <!-- 饱和度 -->
@@ -238,8 +239,8 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="@string/saturation" 
-                android:textColor="@android:color/white"/>
+                android:text="@string/saturation"
+                android:textColor="@android:color/white" />
 
             <SeekBar
                 android:id="@+id/seekbar_saturation"
@@ -251,8 +252,81 @@
             <TextView
                 android:id="@+id/text_saturation_num"
                 android:layout_width="50dp"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_sdr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/layout_background"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sdr"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+        <!-- 最大亮度 -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/max_brightness"
+                android:textColor="@android:color/white" />
+
+            <SeekBar
+                android:id="@+id/seekbar_sdr_max_brightness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="950" />
+
+            <TextView
+                android:id="@+id/text_sdr_progress_max_brightness"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <!-- 最小亮度 -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/min_brightness"
+                android:textColor="@android:color/white" />
+
+            <SeekBar
+                android:id="@+id/seekbar_sdr_min_brightness"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="100" />
+
+            <TextView
+                android:id="@+id/text_sdr_progress_min_progress"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
 

@@ -20,6 +20,7 @@
 #include "jni.h"
 #include <math.h>
 #include "TVInfo.h"
+#include "Vop.h"
 #define MIN(a,b)                        ((a) <= (b) ? (a):(b))
 #define MAX(a,b)                        ((a) >= (b) ? (a):(b))
 #define ROUND(a)						(int)(a+0.5)
@@ -129,6 +130,7 @@ static jintArray getOther(JNIEnv *env, jobject thiz, jdouble x, jdouble y) {
 }
 
 
+
 static jboolean isSupportHDR(JNIEnv *env, jobject thiz){
 	int supportType = HdmiSupportedDataSpace();
 	ALOGI("%d", HdmiSupportedDataSpace());
@@ -141,6 +143,37 @@ static void setHDREnable(JNIEnv *env, jobject thiz, jint enable){
 	setHdmiHDR(enable);
 }
 
+static jintArray getEetf(JNIEnv *env, jobject thiz, jfloat maxDst, jfloat minDst) {
+	ALOGI("%f : %f", maxDst, minDst);
+	jintArray array = env->NewIntArray(33);
+	jint* result = new jint[33];
+	makeHDR2SDREETF(1200, 0.02, maxDst, minDst, result);
+	env->SetIntArrayRegion(array, 0, 33, result);
+	delete[] result;
+	return array;
+}
+
+static jintArray getOetf(JNIEnv *env, jobject thiz, jfloat maxDst, jfloat minDst) {
+	ALOGI("%f : %f", maxDst, minDst);
+	jintArray array = env->NewIntArray(33);
+	jint* result = new jint[33];
+	makeHDR2SDROETF(maxDst, minDst, result);
+	env->SetIntArrayRegion(array, 0, 33, result);
+	delete[] result;
+	return array;
+}
+
+
+static jintArray getMaxMin(JNIEnv *env, jobject thiz, jfloat maxDst, jfloat minDst){
+	ALOGI("%f : %f", maxDst, minDst);
+	jintArray array = env->NewIntArray(2);
+	jint* result = new jint[2];
+	makeMaxMin(1200, 0.02, maxDst, minDst, result);
+	env->SetIntArrayRegion(array, 0, 2, result);
+	delete[] result;
+	return array;
+}
+
 static const char *classPathName = "com/android/tv/settings/util/JniCall";
 
 static JNINativeMethod methods[] = {
@@ -148,6 +181,9 @@ static JNINativeMethod methods[] = {
   {"getOther", "(DD)[I", (void*)getOther },
   {"isSupportHDR", "()Z", (void*)isSupportHDR },
   {"setHDREnable", "(I)V", (void*)setHDREnable },
+  {"getEetf", "(FF)[I", (void*)getEetf },
+  {"getOetf", "(FF)[I", (void*)getOetf },
+  {"getMaxMin", "(FF)[I", (void*)getMaxMin },
 };
 
 /*

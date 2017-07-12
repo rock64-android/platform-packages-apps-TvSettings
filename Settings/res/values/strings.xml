@@ -1890,7 +1890,8 @@
     <string name="progress_scanning">Searching</string>
     <string name="advanced_settings">Advanced settings</string>
     <string name="bcsh">BCSH</string>
-    <string name="hdr">HDR</string>
+    <string name="hdr">SDR->HDR</string>
+    <string name="sdr">HDR->SDR</string>
     <string name="brightness">Brightness</string>
     <string name="current">Current value:</string>
     <string name="contrast">Contrast</string>

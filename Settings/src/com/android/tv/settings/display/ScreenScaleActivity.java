@@ -32,9 +32,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import com.android.tv.settings.R;
 import com.android.tv.settings.data.ConstData;
+import com.android.tv.settings.util.ReflectUtils;
+
 import android.os.SystemProperties;
 public class ScreenScaleActivity extends Activity
 {
+    private static final String TAG = "ScreenScaleActivity";
 	private final int RightButtonPressed = 0;
 	private final int LeftButttonPressed = 1;
 	private final int UpButtonPressed = 2;
@@ -342,7 +345,7 @@ public class ScreenScaleActivity extends Activity
             mLeftScale += 1;
             if(mLeftScale > MAX_SCALE)
                 mLeftScale = MAX_SCALE;
-            setOverScanProperty();
+            setOverScanProperty(ConstData.ScaleDirection.RIGHT);
         }
         if(!isClick){
             mRightButton.setImageResource(R.drawable.button_right_pressed);
@@ -367,7 +370,7 @@ public class ScreenScaleActivity extends Activity
             mLeftScale -= 1;
             if(mLeftScale < MIN_SCALE)
                 mLeftScale = MIN_SCALE;
-            setOverScanProperty();
+            setOverScanProperty(ConstData.ScaleDirection.LEFT);
         }
         if(!isClick){
             mLeftButton.setImageResource(R.drawable.button_left_pressed);
@@ -393,7 +396,7 @@ public class ScreenScaleActivity extends Activity
             mBottomScale -= 1;
             if(mBottomScale < MIN_SCALE)
                 mBottomScale = MIN_SCALE;
-            setOverScanProperty();
+            setOverScanProperty(ConstData.ScaleDirection.TOP);
         }
         if(!isClick){
             mUpButton.setImageResource(R.drawable.button_vertical_up_pressed);
@@ -418,7 +421,7 @@ public class ScreenScaleActivity extends Activity
             mBottomScale += 1;
             if(mBottomScale > MAX_SCALE)
                 mBottomScale = MAX_SCALE;
-            setOverScanProperty();
+            setOverScanProperty(ConstData.ScaleDirection.BOTTOM);
         }
         if(!isClick){
             mDownButton.setImageResource(R.drawable.button_vertical_down_pressed);
@@ -452,18 +455,30 @@ public class ScreenScaleActivity extends Activity
 	      }
 	   }
 	}
-	/**
-	 * 属性设置屏幕缩放
-	 */
-	private void setOverScanProperty(){
-	    StringBuilder builder = new StringBuilder();
-	    builder.append("overscan ").append(mLeftScale).
-	    append(",").append(mBottomScale).
-	    append(",").append(mLeftScale).
-	    append(",").append(mBottomScale);
-	    if(mDisplayInfo.getDisplayId() == 0)
-	        SystemProperties.set(PROPERTY_OVERSCAN_MAIN, builder.toString());
-	    else
-	        SystemProperties.set(PROPERTY_OVERSCAN_AUX, builder.toString());
-	}
+
+    private void setOverScanProperty(int direction) {
+        Object rkDisplayOutputManager = null;
+        try {
+            rkDisplayOutputManager = Class.forName("android.os.RkDisplayOutputManager").newInstance();
+        } catch (Exception e) {
+            // no handle
+        }
+        if (rkDisplayOutputManager == null)
+            return;
+        switch (direction) {
+        case ConstData.ScaleDirection.LEFT:
+        case ConstData.ScaleDirection.RIGHT:
+            Log.i(TAG, "setOverScanProperty->time1:" + System.currentTimeMillis());
+            ReflectUtils.invokeMethod(rkDisplayOutputManager, "setOverScan", new Class[] { int.class, int.class, int.class }, new Object[] { mDisplayInfo.getDisplayId(), 0, mLeftScale });
+            Log.i(TAG, "setOverScanProperty->time2:" + System.currentTimeMillis());
+            break;
+        case ConstData.ScaleDirection.TOP:
+        case ConstData.ScaleDirection.BOTTOM:
+            ReflectUtils.invokeMethod(rkDisplayOutputManager, "setOverScan", new Class[] { int.class, int.class, int.class }, new Object[] { mDisplayInfo.getDisplayId(), 1, mBottomScale });
+            break;
+        default:
+            break;
+        }
+
+    }
 }

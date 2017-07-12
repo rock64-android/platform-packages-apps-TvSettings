@@ -26,5 +26,13 @@ public class ConstData {
 		String MIN_BRIGHTNESS = "hdr_min_brightness";
 		String BRIGHTNESS = "hdr_brightness";
 		String STATURATION = "hdr_staturation";
+		String MAX_SDR_BIRHTNESS = "max_sdr_brightness";
+		String MIN_SDR_BRIGHTNESS = "min_sdr_brightness";
+	}
+	public interface ScaleDirection{
+		int LEFT = 0;
+		int RIGHT = 1;
+		int TOP = 2;
+		int BOTTOM = 3;
 	}
 }

@@ -5,8 +5,8 @@ package com.android.tv.settings.display;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
-
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Button;
@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.R.integer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.DisplayOutputManager;
@@ -21,7 +22,8 @@ import com.android.tv.settings.BaseInputActivity;
 import com.android.tv.settings.R;
 import com.android.tv.settings.data.ConstData;
 import com.android.tv.settings.util.JniCall;
-
+import com.android.tv.settings.util.ReflectUtils;
+import android.os.SystemProperties;
 import android.view.View;
 /**
  * @author GaoFei
@@ -38,6 +40,8 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	private double mOldHdrMinBrightness;
 	private double mOldHdrBrightnessNum;
 	private double mOldHdrSaturationNum;
+	private String mStrPlatform;
+	private boolean mIsSupportDRM;
 	/**
 	 * BCSH亮度
 	 */
@@ -93,6 +97,8 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	public static final String HDR_BRIGHTNESS_PATH = "/sys/class/graphics/fb0/hdr_bt1886eotf";
 	/**亮度-饱和度曲线路径*/
 	public static final String BRIGHTNESS_STATURATION_PATH = "/sys/class/graphics/fb0/hdr_st2084oetf";
+	/**SDR路径*/
+	public static final String SDR_PATH = "/sys/class/graphics/fb0/hdr2sdr_yn";
 	/**Hdr最大亮度滑动条*/
 	private SeekBar mMaxBrightnessBar;
 	/**Hdr最小亮度滑动条*/
@@ -117,6 +123,29 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	private double mBrightnessNum;
 	/**饱和度数值*/
 	private double mSaturationNum;
+	/**显示ID*/
+	private int mDisplayId;
+	/**DRM显示管理*/
+	private Object mRkDisplayManager;
+	/**SDR最大亮度滑动条*/
+	private SeekBar mSeekBarSdrMaxBrightness;
+	/**SDR最小亮度滑动条*/
+	private SeekBar mSeekBarSdrMinBrightness;
+	/**SDR最大亮度*/
+	private TextView mTextSdrMaxBrightness;
+	/**SDR最小亮度*/
+	private TextView mTextSdrMinBrightness;
+	/**SDR最大亮度值*/
+	private int mMaxSdrBirghtness;
+	/**SDR最小亮度值*/
+	private float mMinSdrBrightness;
+	/**SDR曲线1*/
+	private int[] mSdrEetf;
+	/**SDR曲线2*/
+	private int[] mSdrOetf;
+	/**SDR最大亮度，最小亮度*/
+    private int[] mSdrMaxMin;
+    private LinearLayout mLayoutSDR;
 	@Override
 	public void init() {
 		try{
@@ -124,6 +153,15 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 		}catch (Exception e){
 			
 		}
+		mStrPlatform = SystemProperties.get("ro.board.platform");
+		mIsSupportDRM = !SystemProperties.getBoolean("ro.rk.displayd.enable", true);
+		try{
+			if(mIsSupportDRM)
+				mRkDisplayManager = Class.forName("android.os.RkDisplayOutputManager").newInstance();
+		}catch (Exception e){
+			//no hnadle
+		}
+		mDisplayId = getIntent().getIntExtra(ConstData.IntentKey.DISPLAY_ID, 0);
 		mSeekBarBcshBrightness = (SeekBar)findViewById(R.id.brightness);
 		mSeekBarBcshContrast = (SeekBar)findViewById(R.id.contrast);
 		mSeekBarBcshSaturation = (SeekBar)findViewById(R.id.saturation);
@@ -135,6 +173,7 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 		mBtnOK = (Button)findViewById(R.id.btn_ok);
 		mBtnCancel = (Button)findViewById(R.id.btn_cancel);
 		mLayoutHdr = (LinearLayout)findViewById(R.id.layout_hdr);
+		mLayoutSDR = (LinearLayout)findViewById(R.id.layout_sdr);
 		mBtnOK.setOnClickListener(this);
 		mBtnCancel.setOnClickListener(this);
 		mSeekBarBcshContrast.setKeyProgressIncrement(20);
@@ -169,6 +208,29 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 		mSeekBarStatustion.setOnSeekBarChangeListener(this);
 		mTextBrightnessNum = (TextView)findViewById(R.id.text_brightness_num);
 		mTextStatustionNum = (TextView)findViewById(R.id.text_saturation_num);
+		mSeekBarSdrMaxBrightness = (SeekBar)findViewById(R.id.seekbar_sdr_max_brightness);
+		mSeekBarSdrMinBrightness = (SeekBar)findViewById(R.id.seekbar_sdr_min_brightness);
+		mTextSdrMaxBrightness = (TextView)findViewById(R.id.text_sdr_progress_max_brightness);
+		mTextSdrMinBrightness = (TextView)findViewById(R.id.text_sdr_progress_min_progress);
+		mSeekBarSdrMaxBrightness.setOnSeekBarChangeListener(this);
+		mSeekBarSdrMinBrightness.setOnSeekBarChangeListener(this);
+		mSeekBarSdrMaxBrightness.setKeyProgressIncrement(10);
+		try{
+			mMaxSdrBirghtness = Integer.parseInt(getValueFromPreference(ConstData.SharedKey.MAX_SDR_BIRHTNESS));
+		}catch (Exception e){
+			//发生异常，此时恢复默认值
+			mMaxSdrBirghtness = 525;
+		}
+		try{
+			mMinSdrBrightness = Float.parseFloat(getValueFromPreference(ConstData.SharedKey.MIN_SDR_BRIGHTNESS));
+		}catch (Exception e){
+			//发生异常，此时恢复默认值
+			mMinSdrBrightness = 0.5f;
+		}
+		mSeekBarSdrMaxBrightness.setProgress((int)(mMaxSdrBirghtness - 50));
+		mTextSdrMaxBrightness.setText("" + mMaxSdrBirghtness);
+		mSeekBarSdrMinBrightness.setProgress((int)(mMinSdrBrightness * 100));
+		mTextSdrMinBrightness.setText("" + mMinSdrBrightness);
 		try{
 			mMaxBrightness = Double.parseDouble(getValueFromPreference(ConstData.SharedKey.MAX_BRIGHTNESS));
 		}catch (Exception e){
@@ -274,6 +336,14 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 			mSaturationNum = (progress + STATURATION_BASE) * 1.0 / 1000;
 			mTextStatustionNum.setText("" + mSaturationNum);
 			updateBrightnessSaturation();
+		}else if(seekBar == mSeekBarSdrMaxBrightness){
+			mMaxSdrBirghtness = 50 + progress;
+			mTextSdrMaxBrightness.setText("" + mMaxSdrBirghtness);
+			updateSdrContent();
+		}else if(seekBar == mSeekBarSdrMinBrightness){
+			mMinSdrBrightness = progress * 1.0f / 100;
+			mTextSdrMinBrightness.setText("" + mMinSdrBrightness);
+			updateSdrContent();
 		}
 		Log.i(TAG, "onProgressChanged->progress:" + progress);
 	}
@@ -289,17 +359,24 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	}
 
     private void updateBcshValue() {
+        if(mIsSupportDRM && mRkDisplayManager != null){
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setBrightness", new Class[]{int.class, int.class}, new Object[]{mDisplayId, -32 + mSeekBarBcshBrightness.getProgress()});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setContrast", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mSeekBarBcshContrast.getProgress() * 1.0f / 1000});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setSaturation", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mSeekBarBcshSaturation.getProgress() * 1.0f / 1000});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setHue", new Class[]{int.class, float.class}, new Object[]{mDisplayId, -30 + mSeekBarBcshTone.getProgress()});
+            return;
+        }
     	if(mDisplayOutputManager == null)
     		return;
         try {
             //调整亮度
-            mDisplayOutputManager.setBrightness(mDisplayOutputManager.MAIN_DISPLAY, -32 + mSeekBarBcshBrightness.getProgress());
+            mDisplayOutputManager.setBrightness(mDisplayId, -32 + mSeekBarBcshBrightness.getProgress());
             //调整对比度
-            mDisplayOutputManager.setContrast(mDisplayOutputManager.MAIN_DISPLAY, mSeekBarBcshContrast.getProgress() * 1.0f / 1000);
+            mDisplayOutputManager.setContrast(mDisplayId, mSeekBarBcshContrast.getProgress() * 1.0f / 1000);
             //调整饱和度
-            mDisplayOutputManager.setSaturation(mDisplayOutputManager.MAIN_DISPLAY, mSeekBarBcshSaturation.getProgress() * 1.0f / 1000);
+            mDisplayOutputManager.setSaturation(mDisplayId, mSeekBarBcshSaturation.getProgress() * 1.0f / 1000);
             //调整色调
-            mDisplayOutputManager.setHue(mDisplayOutputManager.MAIN_DISPLAY, -30 + mSeekBarBcshTone.getProgress());
+            mDisplayOutputManager.setHue(mDisplayId, -30 + mSeekBarBcshTone.getProgress());
             mTextBcshBrightnessNum.setText("" +  (-32 + mSeekBarBcshBrightness.getProgress()));
             mTextBcshContrastNum.setText("" + mSeekBarBcshContrast.getProgress() * 1.0f / 1000);
             mTextBcshStaurationNum.setText("" +  mSeekBarBcshSaturation.getProgress() * 1.0f / 1000);
@@ -320,6 +397,45 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 		updateFileContent(staturationArray, BRIGHTNESS_STATURATION_PATH);
 	}
 	
+	/**写入更新SDR节点*/
+	private void updateSdrContent(){
+	    if(!"3328".equals(mStrPlatform))
+	        mLayoutSDR.setVisibility(View.GONE);
+		try{
+			mSdrEetf = JniCall.getEetf(mMaxSdrBirghtness, mMinSdrBrightness);
+			mSdrOetf = JniCall.getOetf(mMaxSdrBirghtness, mMinSdrBrightness);
+			mSdrMaxMin = JniCall.getMaxMin(mMaxSdrBirghtness, mMinSdrBrightness);
+			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(SDR_PATH)));
+			StringBuffer eetfBuffer = new StringBuffer();
+			eetfBuffer.append("hdr2sdr_eetf");
+			if(mSdrEetf != null && mSdrEetf.length > 0){
+				for(float item : mSdrEetf)
+					eetfBuffer.append(" ").append(item);
+			}
+			bufferedWriter.write(eetfBuffer.toString());
+			bufferedWriter.flush();
+			StringBuffer oetfBuffer = new StringBuffer();
+			oetfBuffer.append("hdr2sdr_bt1886oetf");
+			if(mSdrOetf != null && mSdrOetf.length > 0){
+				for(float item : mSdrOetf)
+					oetfBuffer.append(" ").append(item);
+			}
+			bufferedWriter.write(oetfBuffer.toString());
+			bufferedWriter.flush();
+			StringBuffer maxMinBuffer = new StringBuffer();
+			oetfBuffer.append("dst_maxlumi");
+			if(mSdrMaxMin != null && mSdrMaxMin.length > 0){
+				for(float item : mSdrMaxMin)
+					oetfBuffer.append(" ").append(item);
+			}
+			bufferedWriter.write(maxMinBuffer.toString());
+			bufferedWriter.flush();
+			bufferedWriter.close();
+		}catch (Exception e){
+			Log.i(TAG, "updateSdrContent->exception:" + e);
+		}
+	}
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
     	if(keyCode == KeyEvent.KEYCODE_BACK){
@@ -331,15 +447,24 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
     }
 
     private void recoveryOldValue(){
+        if(mIsSupportDRM && mRkDisplayManager != null){
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setBrightness", new Class[]{int.class, int.class}, new Object[]{mDisplayId, -32 + mOldBcshBrightness});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setContrast", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mOldBcshContrast * 1.0f / 1000});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setSaturation", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mOldBcshStauration * 1.0f / 1000});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setHue", new Class[]{int.class, float.class}, new Object[]{mDisplayId, -30 + mOldBcshTone});
+            return;
+        }
+		if (mDisplayOutputManager == null)
+			return;
     	try{
     		//调整亮度
-            mDisplayOutputManager.setBrightness(mDisplayOutputManager.MAIN_DISPLAY, -32 + mOldBcshBrightness);
+            mDisplayOutputManager.setBrightness(mDisplayId, -32 + mOldBcshBrightness);
             //调整对比度
-            mDisplayOutputManager.setContrast(mDisplayOutputManager.MAIN_DISPLAY, mOldBcshContrast * 1.0f / 1000);
+            mDisplayOutputManager.setContrast(mDisplayId, mOldBcshContrast * 1.0f / 1000);
             //调整饱和度
-            mDisplayOutputManager.setSaturation(mDisplayOutputManager.MAIN_DISPLAY, mOldBcshStauration * 1.0f / 1000);
+            mDisplayOutputManager.setSaturation(mDisplayId, mOldBcshStauration * 1.0f / 1000);
             //调整色调
-            mDisplayOutputManager.setHue(mDisplayOutputManager.MAIN_DISPLAY, -30 + mOldBcshTone);
+            mDisplayOutputManager.setHue(mDisplayId, -30 + mOldBcshTone);
     	}catch (Exception e){
     		
     	}
@@ -357,6 +482,8 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
     	saveValueToPreference(ConstData.SharedKey.MIN_BRIGHTNESS, "" + mMinBrightness);
     	saveValueToPreference(ConstData.SharedKey.BRIGHTNESS, "" + mBrightnessNum);
     	saveValueToPreference(ConstData.SharedKey.STATURATION, "" + mSaturationNum);
+        saveValueToPreference(ConstData.SharedKey.MAX_SDR_BIRHTNESS, "" + mMaxSdrBirghtness);
+        saveValueToPreference(ConstData.SharedKey.MIN_SDR_BRIGHTNESS, "" + mMinSdrBrightness);
     }
 
 	@Override
@@ -372,7 +499,7 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	
 	/**初始化HDR设置*/
 	public void initHDR(){
-		boolean isSupport= JniCall.isSupportHDR();
+		boolean isSupport= "3328".equals(mStrPlatform) && JniCall.isSupportHDR();
 		if(!isSupport)
 			mLayoutHdr.setVisibility(View.GONE);
 		else{
@@ -386,7 +513,7 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	
 	/**移除HDR*/
 	public void removeHDR(){
-		boolean isSupport= JniCall.isSupportHDR();
+		boolean isSupport= "3328".equals(mStrPlatform) && JniCall.isSupportHDR();
 		if(isSupport){
 			//取消HDR模式
 			JniCall.setHDREnable(0);
@@ -424,10 +551,12 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 	protected void onResume() {
 		super.onResume();
 		initHDR();
+		updateSdrContent();
 	}
 	@Override
 	protected void onPause() {
 		super.onPause();
 		removeHDR();
 	}
+
 }

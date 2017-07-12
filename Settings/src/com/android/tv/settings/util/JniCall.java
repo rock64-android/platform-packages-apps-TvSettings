@@ -14,4 +14,10 @@ public class JniCall {
 	public static native boolean isSupportHDR();
 	//设置电视HDR是否可用
 	public static native void setHDREnable(int enable);
+	//HDR->SDR曲线1
+	public static native int[] getEetf(float maxDst, float minDst);
+	//HDR->SDR曲线2
+	public static native int[] getOetf(float maxDst, float minDst);
+	//HDR->SDR最大，最小亮度生成
+	public static native int[] getMaxMin(float maxDst, float minDst);
 }

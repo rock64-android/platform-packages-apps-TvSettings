@@ -123,8 +123,8 @@ Preference.OnPreferenceClickListener{
             Intent intent = getActivity().getIntent();
             mDisplayInfo = (DisplayInfo) intent.getExtras().getSerializable(ConstData.IntentKey.DISPLAY_INFO);
         }
-        if(!mStrPlatform.contains("3328"))
-        	mPreferenceScreen.removePreference(mAdvancedSettingsPreference);
+        //if(!mStrPlatform.contains("3328"))
+        //mPreferenceScreen.removePreference(mAdvancedSettingsPreference);
     }
 
     protected void rebuildView(){
@@ -206,6 +206,7 @@ Preference.OnPreferenceClickListener{
             //updateResolutionValue();
         }else if(preference == mAdvancedSettingsPreference){
         	Intent advancedIntent = new Intent(getActivity(), AdvancedDisplaySettingsActivity.class);
+			advancedIntent.putExtra(ConstData.IntentKey.DISPLAY_ID, mDisplayInfo.getDisplayId());
             startActivity(advancedIntent);
         }
         return true;
