@@ -168,7 +168,7 @@ public class DrmDisplaySetting {
     private final static String PROP_RESOLUTION_HDMI = "persist.sys.resolution.main";
 
     private static String tmpSetHdmiMode = null;
-    private static String curSetHdmiMode = "1920x1080p60";
+    private static String curSetHdmiMode = "Auto";
 
     public static DisplayInfo getHdmiDisplayInfo() {
 		Object rkDisplayOutputManager = null;
@@ -286,8 +286,9 @@ public class DrmDisplaySetting {
         int[] mainTypes = (int [])ReflectUtils.invokeMethod(rkDisplayOutputManager, "getIfaceList", new Class[]{int.class}, new Object[]{0});
         logd("setHdmiMode->current time 2:" + System.currentTimeMillis());
         if(mainTypes != null && mainTypes.length > 0){
+            logd("DrmDisplaySetting.java setHdmiMode mode = "+mode);
             int currMainType = (Integer)ReflectUtils.invokeMethod(rkDisplayOutputManager, "getCurrentInterface", new Class[]{int.class}, new Object[]{0});
-            ReflectUtils.invokeMethod(rkDisplayOutputManager, "setMode", new Class[]{int.class, int.class, int.class}, new Object[]{0, currMainType, mode});
+            ReflectUtils.invokeMethod(rkDisplayOutputManager, "setMode", new Class[]{int.class, int.class, String.class}, new Object[]{0, currMainType, mode});
         }
         logd("setHdmiMode->current time 3:" + System.currentTimeMillis());
     }
