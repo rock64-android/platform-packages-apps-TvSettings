@@ -35,7 +35,9 @@ import android.os.SystemProperties;
 import android.support.annotation.Keep;
 import com.android.tv.settings.R;
 import com.android.tv.settings.data.ConstData;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 @Keep
 public class DeviceFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener,
 Preference.OnPreferenceClickListener{
@@ -154,6 +156,13 @@ Preference.OnPreferenceClickListener{
             Log.i(TAG, "drm resolutionValue:" + resolutionValue);
             if(resolutionValue != null)
                 mResolutionPreference.setValue(resolutionValue);
+            /*show mResolutionPreference current item*/
+            List<String> modes = DrmDisplaySetting.getDisplayModes(mDisplayInfo);
+            Log.i(TAG, "setValueIndex modes.toString()= "+modes.toString());
+            int index = 0;
+            index = modes.indexOf(resolutionValue);
+            Log.i(TAG, "mResolutionPreference setValueIndex index= "+index);
+            mResolutionPreference.setValueIndex(index);
         }else{
             DisplayOutputManager displayOutputManager = null;
             try{
