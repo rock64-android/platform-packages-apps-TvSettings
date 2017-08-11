@@ -99,11 +99,17 @@ public class DrmDisplaySetting {
     }
 
     public static List<String> getDisplayModes(DisplayInfo di) {
-        List<String> res = null;
+        List<String> res = new ArrayList<String>();
         if (di.getDisplayId() == DISPLAY_TYPE_HDMI) {
-            res =  Arrays.asList(getHdmiDisplayInfo().getOrginModes());
+            di = getHdmiDisplayInfo();
         } else if (di.getDisplayId() == DISPLAY_TYPE_DP){
-            res = Arrays.asList(getDpDisplayInfo().getOrginModes());
+            di = getDpDisplayInfo();
+        }
+        if (di != null) {
+            String[] modes = di.getOrginModes();
+            if (modes != null && modes.length != 0) {
+                res =  Arrays.asList(modes);
+            }
         }
         return res;
     }
