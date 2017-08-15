@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.tv.settings.R;
+import android.util.Log;
 /**
  * @author GaoFei
  *
@@ -21,12 +22,13 @@ public abstract class BaseInputActivity extends Activity{
 	private View mContentView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+	Log.i("BaseInputActivity", "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_base_input);
 		baseInit();
 		init();
 	}
-	private void baseInit(){
+	public void baseInit(){
 		mTextTitle = (TextView)findViewById(R.id.text_title);
 		mTextSummary = (TextView)findViewById(R.id.text_summary);
 		mTextTitle.setText(getInputTitle());

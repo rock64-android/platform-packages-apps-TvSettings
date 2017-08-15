@@ -25,6 +25,8 @@ import com.android.tv.settings.util.JniCall;
 import com.android.tv.settings.util.ReflectUtils;
 import android.os.SystemProperties;
 import android.view.View;
+import android.os.Bundle;
+
 /**
  * @author GaoFei
  * 
@@ -563,11 +565,22 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
     	editor.putString(key, value);
     	editor.commit();
     }
+    
+    	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+	       super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_base_input_for_advanced_display_settings);
+                baseInit();
+                init();
+                getWindow().getDecorView().getRootView().setBackground(getResources().getDrawable(R.drawable.ramiro));
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		initHDR();
 		updateSdrContent();
+
 	}
 	@Override
 	protected void onPause() {
