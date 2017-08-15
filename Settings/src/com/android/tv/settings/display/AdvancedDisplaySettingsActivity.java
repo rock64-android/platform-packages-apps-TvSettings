@@ -176,20 +176,35 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 		mLayoutSDR = (LinearLayout)findViewById(R.id.layout_sdr);
 		mBtnOK.setOnClickListener(this);
 		mBtnCancel.setOnClickListener(this);
-		mSeekBarBcshContrast.setKeyProgressIncrement(20);
-		mSeekBarBcshSaturation.setKeyProgressIncrement(20);
+		SharedPreferences bcshPreferences = getSharedPreferences(ConstData.SharedKey.BCSH_VALUES, Context.MODE_PRIVATE);
+		if (!mIsSupportDRM) {
+			mSeekBarBcshContrast.setKeyProgressIncrement(20);
+			mSeekBarBcshSaturation.setKeyProgressIncrement(20);
+			mOldBcshBrightness = bcshPreferences.getInt(ConstData.SharedKey.BCSH_BRIGHTNESS, 32);
+			mOldBcshContrast = bcshPreferences.getInt(ConstData.SharedKey.BCSH_CONTRAST, 1000);
+			mOldBcshStauration = bcshPreferences.getInt(ConstData.SharedKey.BCSH_STAURATION, 1000);
+			mOldBcshTone = bcshPreferences.getInt(ConstData.SharedKey.BCSH_TONE, 30);
+		} else {
+			mSeekBarBcshBrightness.setMax(100);
+			mSeekBarBcshContrast.setMax(100);
+			mSeekBarBcshSaturation.setMax(100);
+			mSeekBarBcshTone.setMax(100);
+			mSeekBarBcshBrightness.setKeyProgressIncrement(1);
+			mSeekBarBcshContrast.setKeyProgressIncrement(1);
+			mSeekBarBcshSaturation.setKeyProgressIncrement(1);
+			mSeekBarBcshTone.setKeyProgressIncrement(1);
+			mOldBcshBrightness = bcshPreferences.getInt(ConstData.SharedKey.BCSH_BRIGHTNESS, 50);
+			mOldBcshContrast = bcshPreferences.getInt(ConstData.SharedKey.BCSH_CONTRAST, 50);
+			mOldBcshStauration = bcshPreferences.getInt(ConstData.SharedKey.BCSH_STAURATION, 50);
+			mOldBcshTone = bcshPreferences.getInt(ConstData.SharedKey.BCSH_TONE, 50);
+		}
 		mSeekBarBcshBrightness.setOnSeekBarChangeListener(this);
 		mSeekBarBcshContrast.setOnSeekBarChangeListener(this);
 		mSeekBarBcshSaturation.setOnSeekBarChangeListener(this);
 		mSeekBarBcshTone.setOnSeekBarChangeListener(this);
-		SharedPreferences bcshPreferences = getSharedPreferences(ConstData.SharedKey.BCSH_VALUES, Context.MODE_PRIVATE);
-		mOldBcshBrightness = bcshPreferences.getInt(ConstData.SharedKey.BCSH_BRIGHTNESS, 32);
 		mSeekBarBcshBrightness.setProgress(mOldBcshBrightness);
-		mOldBcshContrast = bcshPreferences.getInt(ConstData.SharedKey.BCSH_CONTRAST, 1000);
 		mSeekBarBcshContrast.setProgress(mOldBcshContrast);
-		mOldBcshStauration = bcshPreferences.getInt(ConstData.SharedKey.BCSH_STAURATION, 1000);
 		mSeekBarBcshSaturation.setProgress(mOldBcshStauration);
-		mOldBcshTone = bcshPreferences.getInt(ConstData.SharedKey.BCSH_TONE, 30);
 		mSeekBarBcshTone.setProgress(mOldBcshTone);
 		updateBcshValue();
 		mMaxBrightnessBar = (SeekBar)findViewById(R.id.seekbar_max_brightness);
@@ -360,10 +375,11 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 
     private void updateBcshValue() {
         if(mIsSupportDRM && mRkDisplayManager != null){
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setBrightness", new Class[]{int.class, int.class}, new Object[]{mDisplayId, -32 + mSeekBarBcshBrightness.getProgress()});
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setContrast", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mSeekBarBcshContrast.getProgress() * 1.0f / 1000});
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setSaturation", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mSeekBarBcshSaturation.getProgress() * 1.0f / 1000});
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setHue", new Class[]{int.class, float.class}, new Object[]{mDisplayId, -30 + mSeekBarBcshTone.getProgress()});
+            Log.d(TAG, "b:" + mSeekBarBcshBrightness.getProgress() + " c:" + mSeekBarBcshContrast.getProgress() + " s:" + mSeekBarBcshSaturation.getProgress() + " h:" + mSeekBarBcshTone.getProgress());
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setBrightness", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mSeekBarBcshBrightness.getProgress()});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setContrast", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mSeekBarBcshContrast.getProgress()});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setSaturation", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mSeekBarBcshSaturation.getProgress() });
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setHue", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mSeekBarBcshTone.getProgress()});
             return;
         }
     	if(mDisplayOutputManager == null)
@@ -448,10 +464,10 @@ public class AdvancedDisplaySettingsActivity extends BaseInputActivity implement
 
     private void recoveryOldValue(){
         if(mIsSupportDRM && mRkDisplayManager != null){
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setBrightness", new Class[]{int.class, int.class}, new Object[]{mDisplayId, -32 + mOldBcshBrightness});
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setContrast", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mOldBcshContrast * 1.0f / 1000});
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setSaturation", new Class[]{int.class, float.class}, new Object[]{mDisplayId, mOldBcshStauration * 1.0f / 1000});
-            ReflectUtils.invokeMethod(mRkDisplayManager, "setHue", new Class[]{int.class, float.class}, new Object[]{mDisplayId, -30 + mOldBcshTone});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setBrightness", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mOldBcshBrightness});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setContrast", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mOldBcshContrast});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setSaturation", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mOldBcshStauration});
+            ReflectUtils.invokeMethod(mRkDisplayManager, "setHue", new Class[]{int.class, int.class}, new Object[]{mDisplayId, mOldBcshTone});
             return;
         }
 		if (mDisplayOutputManager == null)
