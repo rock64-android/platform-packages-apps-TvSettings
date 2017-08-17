@@ -308,7 +308,18 @@ public class ConnectivityListener implements WifiTracker.WifiListener {
     }
 
     public void setWifiEnabled(boolean enable) {
+        //check wifiApState first
+        if(mayDisableTethering(enable)){
+            Log.d(TAG,"disable WifiAp first");
+            mWifiManager.setWifiApEnabled(null, false);
+        }
         mWifiManager.setWifiEnabled(enable);
+    }
+
+    private boolean mayDisableTethering(boolean isChecked) {
+        final int wifiApState = mWifiManager.getWifiApState();
+        return isChecked && ((wifiApState == WifiManager.WIFI_AP_STATE_ENABLING) ||
+            (wifiApState == WifiManager.WIFI_AP_STATE_ENABLED));
     }
 
     private boolean setNetworkType(int networkType) {
