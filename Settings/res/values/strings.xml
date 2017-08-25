@@ -1899,4 +1899,5 @@
     <string name="tone">Tone</string>
     <string name="max_brightness">Max brightness</string>
     <string name="min_brightness">Min brightness</string>
+    <string name="cec_enable">CEC</string>
 </resources>

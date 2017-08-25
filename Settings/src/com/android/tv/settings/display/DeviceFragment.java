@@ -38,6 +38,14 @@ import com.android.tv.settings.data.ConstData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.os.SystemProperties;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import android.support.v14.preference.SwitchPreference;
+
 @Keep
 public class DeviceFragment extends LeanbackPreferenceFragment implements Preference.OnPreferenceChangeListener,
 Preference.OnPreferenceClickListener{
@@ -45,6 +53,7 @@ Preference.OnPreferenceClickListener{
     public static final String KEY_RESOLUTION = "resolution";
     public static final String KEY_ZOOM = "zoom";
     public static final String KEY_ADVANCED_SETTINGS = "advanced_settings";
+    public static final String KEY_CEC_ENABLE = "cec_enable";
     protected PreferenceScreen mPreferenceScreen;
     /**
      * 分辨率设置
@@ -58,6 +67,10 @@ Preference.OnPreferenceClickListener{
      * 高级设置
      */
     protected Preference mAdvancedSettingsPreference;
+    /**
+     * Cec开关设置
+     */
+    protected SwitchPreference mCecEnablePreference;
     /**
      * 当前显示设备对应的信息
      */
@@ -101,6 +114,7 @@ Preference.OnPreferenceClickListener{
         super.onResume();
         rebuildView();
         updateResolutionValue();
+        refreshHdmiCecStat();
     }
 
 
@@ -116,6 +130,7 @@ Preference.OnPreferenceClickListener{
         mDisplayManager = (DisplayManager)getActivity().getSystemService(Context.DISPLAY_SERVICE);
         mPreferenceScreen = getPreferenceScreen();
         mAdvancedSettingsPreference = findPreference(KEY_ADVANCED_SETTINGS);
+        mCecEnablePreference = (SwitchPreference)findPreference(KEY_CEC_ENABLE);
         mResolutionPreference = (ListPreference)findPreference(KEY_RESOLUTION);
         mZoomPreference = findPreference(KEY_ZOOM);
         mTextTitle = (TextView)getActivity().findViewById(android.support.v7.preference.R.id.decor_title);
@@ -125,8 +140,38 @@ Preference.OnPreferenceClickListener{
             Intent intent = getActivity().getIntent();
             mDisplayInfo = (DisplayInfo) intent.getExtras().getSerializable(ConstData.IntentKey.DISPLAY_INFO);
         }
+        refreshHdmiCecStat();
         //if(!mStrPlatform.contains("3328"))
         //mPreferenceScreen.removePreference(mAdvancedSettingsPreference);
+    }
+
+    private void refreshHdmiCecStat(){
+       if(mCecEnablePreference!=null){
+         try {
+           if("1".equals(readStrFromHdmiFile("/sys/devices/virtual/misc/cec/enable"))){
+              mCecEnablePreference.setEnabled(true);
+              if("true".equals(SystemProperties.get("persist.sys.hdmi.cec_enable","true")))
+                   mCecEnablePreference.setChecked(true);
+               else
+                   mCecEnablePreference.setChecked(false);
+            } else {
+               mCecEnablePreference.setEnabled(false);
+            }
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+              
+       }
+
+    }
+    private String readStrFromHdmiFile(String filename) throws IOException {
+        Log.d(TAG,"readStrFromHdmiFile - " + filename);
+        File f = new File(filename);
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(f));
+        BufferedReader br = new BufferedReader(reader);
+        String line = br.readLine();
+        Log.d(TAG,"readStrFromHdmiFile - " + line);
+        return line;
     }
 
     protected void rebuildView(){
@@ -202,6 +247,17 @@ Preference.OnPreferenceClickListener{
 
         }
         return true;
+    }
+
+     @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if(preference == mCecEnablePreference){
+             boolean isChecked = mCecEnablePreference.isChecked();
+             SystemProperties.set("persist.sys.hdmi.cec_enable",isChecked ? "true" : "false");
+             return true;
+        }
+       
+        return super.onPreferenceTreeClick(preference);
     }
 
     @Override

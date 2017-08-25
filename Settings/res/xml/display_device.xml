@@ -30,4 +30,9 @@
     <Preference
         android:key="advanced_settings"
         android:title="@string/advanced_settings" />
+
+    <SwitchPreference
+        android:key="cec_enable"
+        android:persistent="false"
+        android:title="@string/cec_enable" />
 </PreferenceScreen>
