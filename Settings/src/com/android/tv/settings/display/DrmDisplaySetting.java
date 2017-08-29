@@ -86,7 +86,7 @@ public class DrmDisplaySetting {
 			//副屏只能有一个
 			DisplayInfo displayInfo = new DisplayInfo();
 			displayInfo.setType(currExternalType);
-			String[] orginModes = (String[])ReflectUtils.invokeMethod(rkDisplayOutputManager, "getModeList", new Class[]{int.class, int.class}, new Object[]{1, externalTypes});
+			String[] orginModes = (String[])ReflectUtils.invokeMethod(rkDisplayOutputManager, "getModeList", new Class[]{int.class, int.class}, new Object[]{1, currExternalType});
 			orginModes = filterOrginModes(orginModes);
 			displayInfo.setOrginModes(orginModes);
 			displayInfo.setModes(getFilterModeList(orginModes));
@@ -115,14 +115,16 @@ public class DrmDisplaySetting {
     }
 
     public static String getCurDisplayMode(DisplayInfo di) {
+        String curMode = null;
         if (di.getDisplayId() == DISPLAY_TYPE_HDMI) {
             logd("DrmDisplaySetting getCurDisplayMode DISPLAY_TYPE_HDMI" + System.currentTimeMillis());
-            return getCurHdmiMode();
+            curMode = getCurHdmiMode();
         } else if (di.getDisplayId() == DISPLAY_TYPE_DP){
             logd("DrmDisplaySetting getCurDisplayMode DISPLAY_TYPE_DP " + System.currentTimeMillis());
-            return getCurDpMode();
+            curMode = getCurDpMode();
         }
-        return null;
+        logd("getCurDisplayMode - curMode - " + curMode);
+        return curMode;
     }
 
     public static String getCurHdmiMode() {
@@ -274,6 +276,7 @@ public class DrmDisplaySetting {
         }
         if (isSave) {
             curSetHdmiMode = tmpSetHdmiMode;
+            saveConfig();
         } else {
             setHdmiMode(curSetHdmiMode);
             tmpSetHdmiMode = null;
@@ -519,5 +522,20 @@ public class DrmDisplaySetting {
             filterModes[i] = itemMode;
         }
         return filterModes;
+    }
+
+    private static int saveConfig() {
+        Object rkDisplayOutputManager = null;
+        try {
+            rkDisplayOutputManager = Class.forName("android.os.RkDisplayOutputManager").newInstance();
+            logd("getDisplayInfoList->rkDisplayOutputManager->name:" + rkDisplayOutputManager.getClass().getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (rkDisplayOutputManager == null)
+            return -1;
+
+        int res = (int) ReflectUtils.invokeMethod(rkDisplayOutputManager, "saveConfig", new Class[] { }, new Object[] {  });
+        return res;
     }
 }

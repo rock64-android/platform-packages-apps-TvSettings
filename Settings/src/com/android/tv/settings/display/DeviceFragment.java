@@ -204,8 +204,11 @@ Preference.OnPreferenceClickListener{
             /*show mResolutionPreference current item*/
             List<String> modes = DrmDisplaySetting.getDisplayModes(mDisplayInfo);
             Log.i(TAG, "setValueIndex modes.toString()= "+modes.toString());
-            int index = 0;
-            index = modes.indexOf(resolutionValue);
+            int index = modes.indexOf(resolutionValue);
+            if (index < 0) {
+                Log.w(TAG, "DeviceFragment - updateResolutionValue - warning index(" + index + ") < 0, set index = 0");
+                index = 0;
+            }
             Log.i(TAG, "mResolutionPreference setValueIndex index= "+index);
             mResolutionPreference.setValueIndex(index);
         }else{

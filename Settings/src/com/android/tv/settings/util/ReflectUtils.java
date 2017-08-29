@@ -45,7 +45,7 @@ public class ReflectUtils {
         }catch (Exception e){
             Log.e(TAG, "invokeMethod->methodName:" + methodName);
             Log.e(TAG, "invokeMethod->exception:" + e);
-        
+            e.printStackTrace();
         }
         return null;
     }

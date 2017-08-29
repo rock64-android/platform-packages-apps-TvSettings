@@ -461,7 +461,7 @@ public class ScreenScaleActivity extends Activity
         try {
             rkDisplayOutputManager = Class.forName("android.os.RkDisplayOutputManager").newInstance();
         } catch (Exception e) {
-            // no handle
+            e.printStackTrace();
         }
         if (rkDisplayOutputManager == null)
             return;
@@ -480,5 +480,7 @@ public class ScreenScaleActivity extends Activity
             break;
         }
 
+        // save config
+        ReflectUtils.invokeMethod(rkDisplayOutputManager, "saveConfig", new Class[] { }, new Object[] { });
     }
 }
