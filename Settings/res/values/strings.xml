@@ -62,7 +62,7 @@
     <!-- Main app title [CHAR LIMIT=40] -->
     <string name="settings_app_name">Settings</string>
 
-    <string name="hotpot_name">HotPot</string>
+    <string name="hotpot_name">Hotspot</string>
 
     <!-- Leanback Launcher App Title for main Settings app [CHAR LIMIT=40] -->
     <string name="launcher_settings_app_name">Settings</string>
