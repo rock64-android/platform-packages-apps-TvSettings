@@ -1890,6 +1890,10 @@
     <string name="progress_scanning">Searching</string>
     <string name="advanced_settings">Advanced settings</string>
     <string name="bcsh">BCSH</string>
+    <string name="bcsh_reset">reset</string>
+    <string name="bcsh_cold">cold</string>
+    <string name="bcsh_warm">warm</string>
+    <string name="bcsh_sharp">sharp</string>
     <string name="hdr">SDR->HDR</string>
     <string name="sdr">HDR->SDR</string>
     <string name="brightness">Brightness</string>

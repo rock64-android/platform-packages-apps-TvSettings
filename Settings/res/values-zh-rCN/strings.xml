@@ -956,6 +956,10 @@
     <string name="progress_scanning">搜索中</string>
     <string name="advanced_settings">高级设置</string>
     <string name="bcsh">BCSH</string>
+    <string name="bcsh_reset">重置</string>
+    <string name="bcsh_cold">冷</string>
+    <string name="bcsh_warm">暖</string>
+    <string name="bcsh_sharp">锐利</string>
     <string name="hdr">HDR</string>
     <string name="brightness">亮度</string>
     <string name="current">当前数值:</string>
