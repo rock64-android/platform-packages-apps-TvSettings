@@ -15,17 +15,16 @@ public class ConstData {
 		String DISPLAY_NAME = "display_name";
 	}
 
-       public interface SharedKey{
-               String BCSH_VALUES = "bcsh_vlaues";
-               String BCSH_BRIGHTNESS = "bcsh_brightness";
-               String BCSH_CONTRAST = "bcsh_contrast";
-               String BCSH_STAURATION = "bcsh_stauration";
-               String BCSH_TONE = "bcsh_tone";
-               String HDR_VALUES = "hdr_values";
-               String MAX_BRIGHTNESS = "hdr_max_brightness";
-               String MIN_BRIGHTNESS = "hdr_min_brightness";
-               String BRIGHTNESS = "hdr_brightness";
-               String STATURATION = "hdr_staturation";
-       }
-
+	public interface SharedKey{
+		String BCSH_VALUES = "bcsh_vlaues";
+		String BCSH_BRIGHTNESS = "bcsh_brightness";
+		String BCSH_CONTRAST = "bcsh_contrast";
+		String BCSH_STAURATION = "bcsh_stauration";
+		String BCSH_TONE = "bcsh_tone";
+		String HDR_VALUES = "hdr_values";
+		String MAX_BRIGHTNESS = "hdr_max_brightness";
+		String MIN_BRIGHTNESS = "hdr_min_brightness";
+		String BRIGHTNESS = "hdr_brightness";
+		String STATURATION = "hdr_staturation";
+	}
 }
